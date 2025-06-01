@@ -5,30 +5,22 @@ CXXFLAGS = -std=c++20 -fmodules-ts -lncurses
 SOURCES := $(wildcard *.cpp)
 OBJECTS := $(patsubst %.cpp,%.o,$(SOURCES))
 DEPENDS := $(patsubst %.cpp,%.d,$(SOURCES))
+AOUT := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))bin/ncvm
 
-# ADD MORE WARNINGS!
 WARNING := -Wall -Wextra
 
-# .PHONY means these rules get executed even if
-# files of those names exist.
-.PHONY: all clean
+# .PHONY: all clean
 
-# The first rule is the default, ie. "make",
-# "make all" and "make parking" mean the same
-all: ncvm-interface
-
-deploy: ncvm-interface
-	ssh virtman@192.168.122.1 'killall -q ncvm-interface; exit 0'
-	scp ncvm-interface virtman@192.168.122.1:~/bin/
+all: ncvm-test1
 
 clean:
-	$(RM) $(OBJECTS) $(DEPENDS) ncvm-interface
+	$(RM) $(OBJECTS) $(DEPENDS) ncvm-test1
 
 # Linking the executable from the object files
-ncvm-interface: $(OBJECTS)
-	$(CXX) $(WARNING) $(CXXFLAGS) $^ -o $@
+ncvm-test1: $(OBJECTS)
+	$(CXX) $(WARNING) $(CXXFLAGS) $^ -o $(AOUT)
 
--include $(DEPENDS)
+# -include $(DEPENDS)
 
 %.o: %.cpp Makefile
 	$(CXX) $(WARNING) $(CXXFLAGS) -MMD -MP -c $< -o $@

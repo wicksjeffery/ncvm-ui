@@ -1,4 +1,4 @@
-//#include "command-line-args.hpp"
+#include "command-line-args.hpp"
 #include "layout.hpp"
 #include "vm-monitor.hpp"
 #include "vm-states.hpp"

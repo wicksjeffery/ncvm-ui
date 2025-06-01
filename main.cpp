@@ -1,51 +1,53 @@
-#include "layout.hpp"
+#include "command-line-args.hpp"
 #include "vm-monitor.hpp"
-#include "vm-states.hpp"
+// #include "layout.hpp"
+// #include "vm-states.hpp"
 
-#include <thread>
-#include <filesystem>
+// #include <thread>
 
-// Write log data to logger_window. This can be relocated to inside Layout.
-void startLoggerWindow(WINDOW* logger_window)
+#include <iostream>
+
+// #include <getopt.h>
+
+// // Write log data to logger_window. This can be relocated to inside Layout.
+// void startLoggerWindow(WINDOW* logger_window)
+// {
+//     std::array<char, 128> buffer;
+//
+//     FILE* pipe = popen("journalctl -f", "r");
+//
+//     if (!pipe) throw std::runtime_error("popen() failed!");
+//
+//
+//     while ((fgets(buffer.data(), buffer.size(), pipe) != NULL))
+//     {
+//             waddstr(logger_window, buffer.data());
+//             wrefresh(logger_window);
+//
+//             sleep(1);
+//     }
+// }
+
+int main(int argc, char* argv[])
 {
-    std::array<char, 128> buffer;
-
-    FILE* pipe = popen("journalctl -f", "r");
-
-    if (!pipe) throw std::runtime_error("popen() failed!");
-
-
-    while ((fgets(buffer.data(), buffer.size(), pipe) != NULL))
+    try
     {
-            waddstr(logger_window, buffer.data());
-            wrefresh(logger_window);
-
-            sleep(1);
+        CommandLineArgs args(argc, argv);
+        //std::cout << "woo: " << args.getPIDFileDir() << std::endl;
+        VMMonitor monitor;
+        monitor.run(args.getPIDFileDir());
     }
-}
-
-
-int main()
-{
-    VmStates vm_states;
-
-    if (std::filesystem::exists("/var/run/libvirt/qemu/GoldLinux.pid"))
+    catch (const std::runtime_error& error)
     {
-        vm_states.GoldLinux_is_running = true;
-    }
-    if (std::filesystem::exists("/var/run/libvirt/qemu/GoldWin10.pid"))
-    {
-        vm_states.GoldWin10_is_running = true;
-    }
-    if (std::filesystem::exists("/var/run/libvirt/qemu/SilverWin.pid"))
-    {
-        vm_states.SilverWin_is_running = true;
+        std::cerr << error.what() << std::endl;
     }
 
-    bool stop_vm_monitor = false;
-    std::thread monitor_vm_status(watch_vm_dir, &stop_vm_monitor, &vm_states);
 
-    Layout layout(vm_states);
+    //
+    // bool stop_vm_monitor = false;
+    // std::thread monitor_vm_status(watch_vm_dir, &stop_vm_monitor, &vm_states);
+
+    // Layout layout(vm_states);
 
 
     // sleep(15);
@@ -53,30 +55,38 @@ int main()
     // monitor_vm_status.join();
 
 
-    WINDOW* lw = layout.getLoggerWindow();
+    // WINDOW* lw = layout.getLoggerWindow();
 
-    std::thread (startLoggerWindow, lw).detach();
+    // std::thread (startLoggerWindow, lw).detach();
 
-    keypad(stdscr, TRUE); // For mouse events.
-    mousemask(BUTTON3_RELEASED | BUTTON2_RELEASED | BUTTON1_PRESSED | BUTTON1_RELEASED, NULL);
-
-    while (true)
-    {
-        // usleep(300);
-        layout.updateVMStatus(vm_states); // maybe add a delay in this function
-
-        int getch_return_value = getch();
-
-        if (getch_return_value == KEY_MOUSE)
-        {
-            MEVENT mouse_event;
-
-            if (getmouse(&mouse_event) == OK)
-            {
-                layout.handleEvents(mouse_event);
-            }
-        }
-    }
+    // initscr();
+    // cbreak();
+    // curs_set(0);
+    // timeout(300);
+    //
+    // keypad(stdscr, TRUE); // For mouse events.
+    // mousemask(BUTTON3_RELEASED | BUTTON2_RELEASED | BUTTON1_PRESSED | BUTTON1_RELEASED, NULL);
+    //
+    // while (true)
+    // {
+    //     // usleep(300);
+    //     // layout.updateVMStatus(vm_states); // maybe add a delay in this function
+    //
+    //     int getch_return_value = getch();
+    //
+    //     if (getch_return_value == KEY_MOUSE)
+    //     {
+    //         printw("poot sqwok\n");
+    //         refresh();
+    //
+    //         // MEVENT mouse_event;
+    //         //
+    //         // if (getmouse(&mouse_event) == OK)
+    //         // {
+    //         //     layout.handleEvents(mouse_event);
+    //         // }
+    //     }
+    // }
 
 
     return 0;
