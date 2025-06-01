@@ -23,7 +23,7 @@
 
 class Layout
 {
-    VmStates m_vm_states;
+    // VmStates m_vm_states;
 
     WINDOW* options;
     WINDOW* machines_window;
@@ -51,10 +51,11 @@ class Layout
                    bool vm_is_running);
 
 public:
-    Layout(VmStates vm_states);
+    // Layout(VmStates vm_states);
+    Layout();
     ~Layout();
 
-    void updateVMStatus(VmStates vm_states);
+    // void updateVMStatus(VmStates vm_states);
 
     WINDOW* getLoggerWindow();
 

@@ -1,6 +1,6 @@
 #include "command-line-args.hpp"
 #include "vm-monitor.hpp"
-// #include "layout.hpp"
+#include "layout.hpp"
 // #include "vm-states.hpp"
 
 // #include <thread>
@@ -30,17 +30,15 @@
 
 int main(int argc, char* argv[])
 {
-    try
-    {
-        CommandLineArgs args(argc, argv);
-        //std::cout << "woo: " << args.getPIDFileDir() << std::endl;
-        VMMonitor monitor;
-        monitor.run(args.getPIDFileDir());
-    }
-    catch (const std::runtime_error& error)
-    {
-        std::cerr << error.what() << std::endl;
-    }
+    // try
+    // {
+    //     VMMonitor monitor;
+    //     monitor.run(args.getPIDFileDir());
+    // }
+    // catch (const std::runtime_error& error)
+    // {
+    //     std::cerr << error.what() << std::endl;
+    // }
 
 
     //
@@ -48,6 +46,7 @@ int main(int argc, char* argv[])
     // std::thread monitor_vm_status(watch_vm_dir, &stop_vm_monitor, &vm_states);
 
     // Layout layout(vm_states);
+    Layout layout;
 
 
     // sleep(15);

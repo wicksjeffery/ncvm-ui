@@ -1,12 +1,6 @@
 #include "command-line-args.hpp"
-// #include <iostream>
-
-// #include <filesystem>
 #include <getopt.h>
-// #include <cstdio>
-// #include <string>
 #include <stdexcept>
-// #include <cstring>
 
 CommandLineArgs::CommandLineArgs(int argc, char** argv)
     :
