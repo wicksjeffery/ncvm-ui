@@ -1,3 +1,4 @@
+// Watch status uses callback.
 #include <libvirt/libvirt.h>
 #include <libvirt/virterror.h>
 #include <stdio.h>

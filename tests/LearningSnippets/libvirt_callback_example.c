@@ -1,3 +1,5 @@
+// Watch status uses callback (thread method)
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <libvirt/libvirt.h>
