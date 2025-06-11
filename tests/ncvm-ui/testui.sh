@@ -14,7 +14,7 @@ startXterm() {
 			-T "ncvm-ui" \
 			-geometry 80x30 \
 			-bc \
-			-e ./ncvm-ui
+			-e bin/ncvm-ui
 	fi
 }
 

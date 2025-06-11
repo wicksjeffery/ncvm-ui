@@ -7,15 +7,11 @@
 // Empty4Now
 // --EMPTY--
 #include <panel.h>
-
-
-
+#include <thread>
 
 class Layout
 {
-    // typedef struct _PANEL_DATA {
-    //     bool hide = false;	/* TRUE if panel is hidden */
-    // }PANEL_DATA;
+    // std::thread t1;
 
     struct PANEL_DATA {
         bool hide = false;	/* TRUE if panel is hidden */
@@ -28,7 +24,7 @@ class Layout
     void createHelpWindow(const char* help_text);
     // // VmStates m_vm_states;
     //
-    // WINDOW* options;
+    WINDOW* menu_options;
     // WINDOW* machines_window;
     //
     // WINDOW* logger_window;
@@ -36,7 +32,8 @@ class Layout
     // WINDOW* GoldWin10Window;
     // WINDOW* SilverWinWindow;
     //
-    // void createToolBar();
+    bool exit_program = false;
+    void createToolBar();
     // void create_outter_machines_window();
     // void create_inner_machines_boxes();
     // void create_logger_window();
@@ -53,6 +50,7 @@ class Layout
     //                std::string vm_name,
     //                bool vm_is_running);
 
+    // void handleMouseEvents();
 public:
     // Layout(VmStates vm_states);
     Layout();
@@ -62,8 +60,8 @@ public:
 
     // WINDOW* getLoggerWindow();
 
-    // void handleEvents(MEVENT mouse_event);
-    void test();
+    // void handleMouseEvents(MEVENT mouse_event);
+    int handleMouseEvents(int n);
 };
 
 #endif

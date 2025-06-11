@@ -1,33 +1,20 @@
 #include "layout.hpp"
 
-#include <string.h>
-
-typedef struct _PANEL_DATA {
-    bool hide;	/* TRUE if panel is hidden */
-}PANEL_DATA;
+// #include <string.h>
+#include <thread>
+#include <iostream>
 
 
 
 // Layout::Layout(VmStates vm_states)
 Layout::Layout()
 {
-    // // WINDOW *my_wins[3];
-    // PANEL  *my_panels[3];
-    // PANEL_DATA panel_datas[3];
-    // PANEL_DATA *temp;
-    // int ch;
-    // m_vm_states = vm_states;
-
-    // initscr();
-    // cbreak();
-    // curs_set(0);
-    // timeout(300);
-    /* Initialize curses */
     initscr();
     cbreak();
     curs_set(0);
     noecho();
     keypad(stdscr, TRUE);
+    mousemask(BUTTON3_RELEASED | BUTTON2_PRESSED | BUTTON2_RELEASED | BUTTON1_PRESSED | BUTTON1_RELEASED, NULL);
     start_color();
     init_pair(2, COLOR_BLUE, COLOR_BLUE);
     init_pair(3, COLOR_WHITE, COLOR_WHITE);
@@ -46,13 +33,14 @@ Layout::Layout()
     init_pair(16, COLOR_GREEN, COLOR_BLACK);
     init_pair(17, COLOR_WHITE, COLOR_GREEN); //this one for vm is running
     init_pair(18, COLOR_YELLOW, COLOR_GREEN);
+    init_pair(19, COLOR_BLACK, COLOR_WHITE); //TESTING
 
 
     wbkgd(stdscr,COLOR_PAIR(2));
 
     refresh();
     //
-    // createToolBar();
+    createToolBar();
     // create_outter_machines_window();
     // create_logger_window();
     //
@@ -65,71 +53,63 @@ Layout::Layout()
 
     createHelpWindow("This is the help text.");
     help_panel = new_panel(help_window); 	/* Push 0, order: stdscr-0 */
-    // help_panel_data->hide = false;
+    // help_panel_data.hide = false;
     set_panel_userptr(help_panel, &help_panel_data);
 
     update_panels();
     doupdate();
-    getch();
 }
 
 Layout::~Layout()
 {
+        // t1.join();
     endwin();
-}
-
-void Layout::test()
-{
-    help_panel_data.hide = true;
 }
 
 void Layout::createHelpWindow(const char* help_text)
 {
-    help_window = newwin(LINES-4, COLS-6, 2, 2);
+    help_window = newwin(LINES-4, COLS-5, 2, 2);
 
+    wattron(help_window, COLOR_PAIR(3) | A_BOLD);
     box(help_window, 0, 0);
-
-
-    wbkgd(help_window,COLOR_PAIR(3) | A_BOLD);
+    wattroff(help_window, COLOR_PAIR(3) | A_BOLD);
 
     // BEGIN: give the box a "shadow"
     attron(COLOR_PAIR(4));
     //Right
-    move(2, COLS-2);
+    move(3, COLS-3);
     vline(' ', LINES-4);
 
     //Bottom
-    move(LINES-2, 2);
-    hline(' ', COLS-3);
+    move(LINES-2, 3);
+    hline(' ', COLS-6);
 
     attroff(COLOR_PAIR(4));
     // END: give the box a "shadow"
 
-    wattron(help_window, COLOR_PAIR(5) | A_DIM);
-    mvwprintw(help_window, 4, 2, "%s", help_text);
-    wattroff(help_window, COLOR_PAIR(5) | A_DIM);
+    mvwprintw(help_window, 1, 1, "%s", help_text);
+
+    wbkgd(help_window, COLOR_PAIR(19));
 }
 
-// void Layout::createToolBar()
-// {
-//     // attron(COLOR_PAIR(6));
-//     // move(0, 0);
-//     // hline(' ', COLS);
-//     //
-//     // // mvaddstr(0, 0, "File");
-//     // attroff(COLOR_PAIR(6));
-//     // refresh();
-//     //
-//     // options = newwin(1, 4, 0, COLS-4);
-//     // box(options, 0 , 0);
-//     // // wbkgd(options,COLOR_PAIR(3) | A_BOLD);
-//     // waddstr(options, "HALT");
-//     //
-//     // wrefresh(options);
-//
-//
-// }
-//
+void Layout::createToolBar()
+{
+    //BEGIN Top bar
+    attron(COLOR_PAIR(19));
+    move(0, 0);
+    hline(' ', COLS);
+
+    attroff(COLOR_PAIR(19));
+    refresh();
+    //END Top bar
+
+    menu_options = newwin(1, 4, 0, 1);
+    wbkgd(menu_options, COLOR_PAIR(19));
+    waddstr(menu_options, "menu");
+
+    wrefresh(menu_options);
+}
+
 // void Layout::drawVMBox(int horizontal_position, std::string vm_name, bool vm_is_running)
 // {
 //     // // The left vm box:
@@ -325,8 +305,43 @@ void Layout::createHelpWindow(const char* help_text)
 // }
 //
 //
-// void Layout::handleEvents(MEVENT mouse_event)
-// {
+
+int Layout::handleMouseEvents(int n)
+{
+    MEVENT mouse_event;
+
+    while (exit_program == false)
+    {
+        int getch_return_value = getch();
+
+        if (getch_return_value == KEY_MOUSE && getmouse(&mouse_event) == OK)
+        {
+            if (mouse_event.bstate & BUTTON1_RELEASED)
+            {
+                /*
+                * NOTE: GPM selection workaround:
+                * The left mouse button leaves selections highlighted,
+                * but sending a key clears the selection.
+                */
+
+                std::cout << std::endl;
+            }
+
+            if (mouse_event.bstate & BUTTON2_PRESSED)
+            {
+                if (wenclose(menu_options, mouse_event.y, mouse_event.x) == true)
+                {
+                    mvwprintw(help_window, 5, 5, "%s", "BUTTON2_PRESSED");
+                    wrefresh(help_window);
+                    exit_program = true;
+                }
+            }
+        }
+    }
+
+
+return 5;
+
 //     // // BEGIN deselection workaround. Not totally sure why it works.
 //     // if (mouse_event.bstate & BUTTON1_PRESSED)
 //     // {
@@ -437,4 +452,4 @@ void Layout::createHelpWindow(const char* help_text)
 //     //         std::thread(&Layout::deselectBox, this, "SilverWin").detach();
 //     //     }
 //     // }
-// }
+}
