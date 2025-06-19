@@ -1,7 +1,0 @@
-/home/jwicks/Software/ncvm-ui/build/CMakeFiles/ncvm-ui.dir
-/home/jwicks/Software/ncvm-ui/build/CMakeFiles/edit_cache.dir
-/home/jwicks/Software/ncvm-ui/build/CMakeFiles/rebuild_cache.dir
-/home/jwicks/Software/ncvm-ui/build/CMakeFiles/list_install_components.dir
-/home/jwicks/Software/ncvm-ui/build/CMakeFiles/install.dir
-/home/jwicks/Software/ncvm-ui/build/CMakeFiles/install/local.dir
-/home/jwicks/Software/ncvm-ui/build/CMakeFiles/install/strip.dir

@@ -1,2 +1,3 @@
 ncvm-interface-tester.qcow2
 tests/ncvm-interface-tester.qcow2
+./build
