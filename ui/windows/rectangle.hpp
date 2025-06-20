@@ -3,6 +3,8 @@
 
 #include <panel.h>
 
+#include <iostream>
+
 namespace UI::Windows
 {
     class Rectangle
@@ -24,14 +26,20 @@ namespace UI::Windows
             return m_panel;
         }
 
+        virtual void toggleSelected() { /*std::cout << '\a' << std::endl;*/}
+
+        virtual void hello() const
+        {
+            std::cout << "Hello from Window." << std::endl;
+        }
+
     protected:
         WINDOW* m_window;
         PANEL* m_panel;
 
-        virtual const char* hello() const
-        {
-            return "Hello from Window.";
-        }
+
+
+
     };
 }
 

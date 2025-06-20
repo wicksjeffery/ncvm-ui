@@ -10,6 +10,13 @@ namespace UI::Windows
     {
     public:
         OptionsSelector(int height, int width, int begin_y, int begin_x);
+
+        void toggleSelected() override;
+
+        void hello() const override
+        {
+            std::cout << "Hello from OptionsSelector. \a" << std::endl;
+        }
     };
 }
 

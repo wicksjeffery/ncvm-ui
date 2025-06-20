@@ -1,3 +1,6 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x0e\x00n\x00c\x00v\x00m\x00-\x00u\x00i)
+
 [CMake]
 Build Directory Count=1
 Current Build Directory Index-Host System=0
@@ -23,8 +26,8 @@ Type=Native Application
 
 [Launch][Launch Configuration 0][Data]
 Arguments=-t
-Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
-Dependency Action=Nothing
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x0e\x00n\x00c\x00v\x00m\x00-\x00u\x00i)
+Dependency Action=Build
 EnvironmentGroup=
 Executable=file:///home/jwicks/Software/ncvm-ui/tests/testui.sh
 External Terminal=konsole --noclose --workdir %workdir -e %exe

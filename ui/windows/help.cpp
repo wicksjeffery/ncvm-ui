@@ -5,7 +5,7 @@ UI::Windows::Help::Help(int height, int width, int begin_y, int begin_x)
     :
         Rectangle(height, width, begin_y, begin_x)
 {
-    wbkgd(m_window, COLOR_PAIR(19));
+    wbkgd(m_window, COLOR_PAIR(3));
 
     // BEGIN: give the box a "shadow"
     wattron(m_window, COLOR_PAIR(4));
@@ -15,8 +15,8 @@ UI::Windows::Help::Help(int height, int width, int begin_y, int begin_x)
 
     // Hardcode top right and bottom left characters to
     // give a transparent look.
-    mvwaddch(m_window, 0, width-1, ' ' | COLOR_PAIR(2));
-    mvwaddch(m_window, height-1, 0, ' ' | COLOR_PAIR(2));
+    mvwaddch(m_window, 0, width-1, ' ' | COLOR_PAIR(1));
+    mvwaddch(m_window, height-1, 0, ' ' | COLOR_PAIR(1));
 
     // END: give the box a "shadow"
 

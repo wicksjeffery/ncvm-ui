@@ -5,7 +5,7 @@ UI::Windows::Options::Options(int height, int width, int begin_y, int begin_x)
     :
         Rectangle(height, width, begin_y, begin_x)
 {
-    wbkgd(m_window, COLOR_PAIR(19));
+    wbkgd(m_window, COLOR_PAIR(3));
 
     // BEGIN: give the box a "shadow"
     wattron(m_window, COLOR_PAIR(4));
@@ -14,11 +14,10 @@ UI::Windows::Options::Options(int height, int width, int begin_y, int begin_x)
     wattroff(m_window, COLOR_PAIR(4));
 
     wattron(m_window, COLOR_PAIR(4));
-    mvwaddch(m_window, height-1, 0, ' '| COLOR_PAIR(2));
+    mvwaddch(m_window, height-1, 0, ' '| COLOR_PAIR(1));
     wattroff(m_window, COLOR_PAIR(4));
 
     // END: give the box a "shadow"
 
     hide_panel(m_panel);
 }
-

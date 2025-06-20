@@ -14,7 +14,8 @@ namespace UI
     public:
         // std::vector<const Windows::Rectangle*> all_windows;
         //TODO make this private:
-        std::unordered_map<std::string, const Windows::Rectangle*> all_windows;
+        // std::unordered_map<std::string, const Windows::Rectangle*> all_windows;
+        std::unordered_map<std::string, Windows::Rectangle*> all_windows;
 
         // void save_window(const UI::Windows::Rectangle* rect)
         // {

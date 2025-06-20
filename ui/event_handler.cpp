@@ -3,7 +3,7 @@
 
 #include <curses.h>
 
-UI::EventHandler::EventHandler(std::unordered_map<std::string, const Windows::Rectangle*> &w)
+UI::EventHandler::EventHandler(std::unordered_map<std::string, Windows::Rectangle*> &w)
     :
         m_windows(w)
 {}
@@ -71,12 +71,16 @@ int UI::EventHandler::listen(int n)
                         {
                             // mvprintw(6, 6, "%s", key.c_str());
                             // mvprintw(6, 6, ":)");
-                            auto options_window = m_windows.find("Options");
+                            // auto options_selector = m_windows.find("Options");
 
-                            show_panel(options_window->second->get_panel());
+                            // show_panel(options_selector->second->get_panel());
+
+                            value->toggleSelected();
+                            // options_selector->second->hello();
 
                             update_panels();
                             doupdate();
+
                             break;
                         } else
                         {

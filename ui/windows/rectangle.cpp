@@ -9,8 +9,6 @@ UI::Windows::Rectangle::Rectangle(int nlines, int ncols, int begin_y, int begin_
     m_window = newwin(nlines, ncols, begin_y, begin_x);
 
     m_panel = new_panel(m_window);
-/*
-    wbkgd(m_window, COLOR_PAIR(2));*/
 }
 
 UI::Windows::Rectangle::~Rectangle()

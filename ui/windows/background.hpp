@@ -12,10 +12,6 @@ namespace UI::Windows
     class Background : public Rectangle
     {
     public:
-        const char* hello() const override
-        {
-            return "Hello from Background.";
-        }
 
         Background(int height, int width, int begin_y, int begin_x);
     };

@@ -16,11 +16,12 @@ namespace UI
         bool exit_program = false;
 
         // Reference to the pointer to windows that's in layout.
-        std::unordered_map<std::string, const Windows::Rectangle*> &m_windows;
+        std::unordered_map<std::string, Windows::Rectangle*> &m_windows;
+        // std::unordered_map<std::string, Windows::Rectangle*> &m_windows;
 
 
     public:
-        EventHandler(std::unordered_map<std::string, const Windows::Rectangle*> &w);
+        EventHandler(std::unordered_map<std::string, Windows::Rectangle*> &w);
 
         int listen(int n);
     };
