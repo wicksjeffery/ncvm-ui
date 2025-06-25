@@ -11,7 +11,9 @@ namespace UI::Windows
     public:
         OptionsSelector(int height, int width, int begin_y, int begin_x);
 
-        void toggleSelected() override;
+        void toggleHighlighting() override;
+        void turnOnHighlighting() override;
+        void turnOffHighlighting() override;
 
         void hello() const override
         {

@@ -10,12 +10,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(SRC_LIST
     main.cpp
     ui/layout.cpp
-    ui/event_handler.cpp
+    ui/event-handler.cpp
+    ui/windows/collection.cpp
     ui/windows/rectangle.cpp
     ui/windows/background.cpp
     ui/windows/help.cpp
     ui/windows/options-selector.cpp
-    ui/windows/options.cpp)
+    ui/windows/options.cpp
+    ui/windows/exit-selector.cpp)
 
 set(CURSES_NEED_NCURSES TRUE)
 find_package(Curses REQUIRED)

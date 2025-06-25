@@ -1,0 +1,106 @@
+#include "event-handler.hpp"
+#include <iostream>
+#include "windows/collection.hpp"
+#include <curses.h>
+#include <fstream>
+
+// UI::EventHandler::EventHandler(std::unordered_map<std::string, Windows::Rectangle*> *w)
+//     :
+//         m_windows(*w)
+// {
+//         std::ofstream outputFile;
+//         outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
+//         // // // for (auto [key, value]: *m_windows)
+//         // // // {
+//         // //
+//         // //     // printw("%s", key.c_str());
+//             auto it = m_windows.find("Help");
+//         // //     // printw("%s", it->first.c_str());
+//         // //
+//             outputFile << it.&first << std::endl;
+//         // // // }
+//         // //
+//         // //
+//         // //
+//         outputFile.close();
+//
+// }
+
+void UI::EventHandler::toggleOptionsSelector(bool options_selector_was_clicked = false)
+{
+    UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
+
+    if ( panel_hidden(collection.find("Options")->get_panel()) && options_selector_was_clicked)
+    {
+        show_panel(collection.find("Options")->get_panel());
+        show_panel(collection.find("ExitSelector")->get_panel());
+        collection.find("OptionsSelector")->turnOnHighlighting();
+    } else
+    {
+        hide_panel(collection.find("Options")->get_panel());
+        hide_panel(collection.find("ExitSelector")->get_panel());
+        collection.find("OptionsSelector")->turnOffHighlighting();
+    }
+}
+
+
+int UI::EventHandler::listen(int n)
+{
+    std::ofstream outputFile;
+
+    MEVENT mouse_event;
+
+    while (exit_program == false)
+    {
+        int getch_return_value = getch();
+
+        if (getch_return_value == KEY_MOUSE && getmouse(&mouse_event) == OK)
+        {
+            if (mouse_event.bstate & BUTTON1_RELEASED)
+            {
+                /*
+                 * NOTE: GPM selection workaround:
+                 *return 0; The left mouse button leaves selections highlighted,
+                 * but sending a key clears the selection.
+                 */
+
+                std::cout << std::endl;
+            }
+
+            if (mouse_event.bstate & BUTTON2_PRESSED)
+            {
+                UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
+
+                auto pair = collection.findWindow(mouse_event.y, mouse_event.x);
+
+                if (pair.first != "")
+                {
+                    mvwprintw(collection.find("Help")->get_window(), 6, 25, "You clicked:                       ");
+                    mvwprintw(collection.find("Help")->get_window(), 6, 25, "You clicked: %s", pair.first.c_str());
+
+                    if (pair.first == "OptionsSelector")
+                    {
+                        toggleOptionsSelector(true);
+                    } else if (pair.first == "ExitSelector")
+                    {
+                        // mvwprintw(collection.find("Help")->get_window(), 6, 25, "You clicked:                       ");
+                        // mvwprintw(collection.find("Help")->get_window(), 6, 25, "You clicked: %s", pair.first.c_str());
+                        exit_program = true;
+                    } else
+                    {
+                        // Close options window if it is open.
+                        toggleOptionsSelector();
+                    }
+                } else
+                {
+                    // It shouldn't be possible to get here. Maybe throw instead?
+                    mvwprintw(collection.find("Help")->get_window(), 6, 25, "EMPTY WINDOW");
+                }
+
+                update_panels();
+                doupdate();
+            }
+        }
+    }
+    return 1; //returning arbitrary value (not used yet)
+}

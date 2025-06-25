@@ -26,7 +26,9 @@ namespace UI::Windows
             return m_panel;
         }
 
-        virtual void toggleSelected() { /*std::cout << '\a' << std::endl;*/}
+        virtual void toggleHighlighting(){}
+        virtual void turnOnHighlighting(){}
+        virtual void turnOffHighlighting(){}
 
         virtual void hello() const
         {

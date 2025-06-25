@@ -1,11 +1,20 @@
 #include "layout.hpp"
+#include "windows/collection.hpp"
 #include "windows/rectangle.hpp"
 #include "windows/background.hpp"
 #include "windows/help.hpp"
 #include "windows/options-selector.hpp"
 #include "windows/options.hpp"
+#include "windows/exit-selector.hpp"
 
-UI::Layout::Layout()
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <typeinfo>
+// #include <fstream>
+#include <cxxabi.h>
+
+UI::Layout::Layout(/*std::unordered_map<std::string, Windows::Rectangle*> all_windows*/)
 {
     initscr();
     cbreak();
@@ -20,89 +29,77 @@ UI::Layout::Layout()
     init_pair(3, COLOR_BLACK, COLOR_WHITE);
     init_pair(4, COLOR_BLACK, COLOR_BLACK);
     init_pair(5, COLOR_WHITE, COLOR_BLACK);
-    // init_pair(2, COLOR_BLUE, COLOR_BLUE);
-    // init_pair(3, COLOR_WHITE, COLOR_WHITE);
-    // init_pair(4, COLOR_BLACK, COLOR_BLACK);
-    // init_pair(5, COLOR_BLACK, COLOR_WHITE);
-    // init_pair(6, COLOR_WHITE, COLOR_BLACK);
-    // init_pair(7, COLOR_CYAN, COLOR_CYAN);
-    // init_pair(8, COLOR_CYAN, COLOR_BLACK);
-    // init_pair(9, COLOR_BLACK, COLOR_CYAN);
-    // init_pair(10, COLOR_WHITE, COLOR_GREEN);
-    // init_pair(11, COLOR_WHITE, COLOR_BLUE);
-    // init_pair(12, COLOR_WHITE, COLOR_CYAN);
-    // init_pair(13, COLOR_YELLOW, COLOR_BLACK);
-    // init_pair(14, COLOR_BLACK, COLOR_CYAN);
-    // init_pair(15, COLOR_RED, COLOR_BLACK);
-    // init_pair(16, COLOR_GREEN, COLOR_BLACK);
-    // init_pair(17, COLOR_WHITE, COLOR_GREEN); //this one for vm is running
-    // init_pair(18, COLOR_YELLOW, COLOR_GREEN);
-    // init_pair(19, COLOR_BLACK, COLOR_WHITE); //TESTING
-    // init_pair(20, COLOR_WHITE, COLOR_BLACK); //TESTING
-    // init_pair(21, COLOR_WHITE, COLOR_BLACK); //TESTING
-    // init_pair(22, COLOR_WHITE, COLOR_BLACK); //TESTING
-
-    // //BEGIN Top (menu options) bar
-    // attron(COLOR_PAIR(19));
-    // mvhline(COLS-1, 1, ' ', LINES-1);
-    // attroff(COLOR_PAIR(19));
-    // //END Top (menu options) bar
 
 
-//     menu_options = newwin(1, 4, 0, 1);
-//     wbkgd(menu_options, COLOR_PAIR(19));
-//     waddstr(menu_options, "menu");
-//
-//     wrefresh(menu_options);
 
+    using namespace Windows;
+    Rectangle* ptr;
 
-    // using namespace Windows;
-    // // using WR = const Rectangle*;
-    // using WR = Rectangle*;
+    save(new Background(LINES, COLS, 0, 0));
+    save(new Help(LINES-3, COLS-4, 2, 2));
+    save(new OptionsSelector(1, 9, 0, 0));
+    save(new Options(14, 15, 1, 0));
+    save(new ExitSelector(1, 12, 12, 1));
+
+    // ptr = new Windows::Background(LINES, COLS, 0, 0);
+    // // // all_windows.insert( {"Background", ptr} );
     //
-    // all_windows.insert({"Background", static_cast<WR>
-    //     (new Background(LINES, COLS, 0, 0) )} );
-    //
-    // all_windows.insert({"Help", static_cast<WR>
-    //     (new Help(LINES-3, COLS-4, 2, 2) )} );
-    //
-    // all_windows.insert({"OptionsSelector", static_cast<WR>
-    //     (new OptionsSelector(1, 9, 0, 0) )} );
-    //
-    // all_windows.insert({"Options", static_cast<WR>
-    //     (new Options(20, 20, 1, 0) )} );
-
-    Windows::Rectangle* ptr;
-
-    ptr = new Windows::Background(LINES, COLS, 0, 0);
-    all_windows.insert( {"Background", ptr} );
-    ptr = new Windows::Help(LINES-3, COLS-4, 2, 2);
-    all_windows.insert( {"Help", ptr} );
-    ptr = new Windows::OptionsSelector(1, 9, 0, 0);
-    all_windows.insert( {"OptionsSelector", ptr} );
-    ptr = new Windows::Options(20, 20, 1, 0);
-    all_windows.insert( {"Options", ptr} );
+    // // ptr = new Windows::Help(LINES-3, COLS-4, 2, 2);
+    // // all_windows.insert( {"Help", ptr} );
+    // // ptr = new Windows::OptionsSelector(1, 9, 0, 0);
+    // // all_windows.insert( {"OptionsSelector", ptr} );
+    // // ptr = new Windows::Options(20, 20, 1, 0);
+    // // all_windows.insert( {"Options", ptr} );
 
     update_panels();
     doupdate();
+}
 
-    // basePtr->hello();
+// std::ofstream outputFile;
+void UI::Layout::save(Windows::Rectangle* w)
+{
+    // BEGIN extra code to shorten lines of code in window instantiation (in UI::Layout::Layout().
+    int status = -1; // Status of the demangling operation
+    char* window_name = abi::__cxa_demangle(typeid(*w).name(), nullptr, nullptr, &status);
 
-    // auto options_selector = all_windows.find("OptionsSelector");
-    // //
-    // // // OptionsSelector* derivedPtr = dynamic_cast<OptionsSelector*>(options_selector->second);
-    // // //
-    // options_selector->second->hello();
-    // getch();
+    std::string child_class_name(window_name);
+    if (status == 0)
+    {
+        // std::string temp = child_class_name.substr(child_class_name.find_first_not_of("UI::Windows::"));
+        child_class_name = child_class_name.substr(child_class_name.find_first_not_of("UI::Windows::"));
 
+        std::free(window_name);
+    } else {
+        throw("Name demangling failed");
+    }
+    // BEGIN extra code to shorten lines of code in window instantiation.
+
+
+    UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
+    // logger1.logMessage("First message from logger1.");
+    collection.insert(child_class_name, w);
+
+    // outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
+//     for (auto const& [key, value]: m_windows)
+//     {
+//         // printw("%s", key.c_str());
+//
+//
+        // outputFile << "ok: " << collection.print() << std::flush;
+//     }
+
+    // outputFile << child_class_name << std::endl;
+    // outputFile.close();
+
+    // collection.printAll();
 }
 
 UI::Layout::~Layout()
 {
-    for (auto const& [key, val] : all_windows)
-    {
-        delete val;
-    }
+    // for (auto const& [key, val] : all_windows)
+    // {
+    //     delete val;
+    // }
 
     endwin();
 }
