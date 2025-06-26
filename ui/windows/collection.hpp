@@ -15,6 +15,7 @@ namespace UI::Windows
     {
         // Private constructor to prevent direct instantiation
         Collection() = default;
+        ~Collection();
         // Delete copy constructor and assignment operator to prevent copying
         Collection(const Collection&) = delete;
         Collection& operator=(const Collection&) = delete;
@@ -36,14 +37,15 @@ namespace UI::Windows
         {
             auto search = m_windows.find(key);
 
-            return (search != m_windows.end()) ? search->second : throw("bad search y'all");
+            return (search != m_windows.end()) ? search->second : throw std::runtime_error("Collection: Key not found.");;
         }
 
         void printAll() const
         {
             std::ofstream outputFile;
 
-             outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
+             // outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
+            outputFile.open("/tmp/debug.txt");
 
             for (auto const& [key, val] : m_windows)
             {

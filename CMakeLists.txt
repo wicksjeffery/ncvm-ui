@@ -14,10 +14,11 @@ set(SRC_LIST
     ui/windows/collection.cpp
     ui/windows/rectangle.cpp
     ui/windows/background.cpp
-    ui/windows/help.cpp
-    ui/windows/options-selector.cpp
-    ui/windows/options.cpp
-    ui/windows/exit-selector.cpp)
+    ui/windows/information.cpp
+    ui/windows/options-button.cpp
+    ui/windows/options-menu/options-window.cpp
+    ui/windows/options-menu/about.cpp
+    ui/windows/options-menu/exit.cpp)
 
 set(CURSES_NEED_NCURSES TRUE)
 find_package(Curses REQUIRED)

@@ -1,10 +1,10 @@
-#include "exit-selector.hpp"
+#include "exit.hpp"
 
 #include <iostream>
 
-UI::Windows::ExitSelector::ExitSelector(int height, int width, int begin_y, int begin_x)
-:
-Rectangle(height, width, begin_y, begin_x)
+UI::Windows::MenuItems::Exit::Exit(int height, int width, int begin_y, int begin_x)
+    :
+        Rectangle(height, width, begin_y, begin_x)
 {
     wbkgd(m_window, COLOR_PAIR(3));
 

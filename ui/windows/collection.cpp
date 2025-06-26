@@ -6,3 +6,14 @@ UI::Windows::Collection& UI::Windows::Collection::getInstance()
     static Collection instance;
     return instance;
 }
+
+
+
+
+UI::Windows::Collection::~Collection()
+{
+    for (auto const& [key, val] : m_windows)
+    {
+        delete val;
+    }
+}

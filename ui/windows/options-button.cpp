@@ -1,8 +1,8 @@
-#include "options-selector.hpp"
+#include "options-button.hpp"
 
 #include <iostream>
 
-UI::Windows::OptionsSelector::OptionsSelector(int height, int width, int begin_y, int begin_x)
+UI::Windows::OptionsButton::OptionsButton(int height, int width, int begin_y, int begin_x)
     :
         Rectangle(height, width, begin_y, begin_x)
 {
@@ -11,7 +11,7 @@ UI::Windows::OptionsSelector::OptionsSelector(int height, int width, int begin_y
 }
 
 // Invert colors - wattron(m_window, A_REVERSE) didn't work.
-void UI::Windows::OptionsSelector::toggleHighlighting()
+void UI::Windows::OptionsButton::toggleHighlighting()
 {
     chtype background_attrs = getbkgd(m_window);
     uint8_t color_pair_id = PAIR_NUMBER(background_attrs);
@@ -19,12 +19,12 @@ void UI::Windows::OptionsSelector::toggleHighlighting()
     wbkgd(m_window, COLOR_PAIR(color_pair_id ^= 0x6));
 }
 
-void UI::Windows::OptionsSelector::turnOnHighlighting()
+void UI::Windows::OptionsButton::turnOnHighlighting()
 {
     wbkgd(m_window, COLOR_PAIR(5));
 }
 
-void UI::Windows::OptionsSelector::turnOffHighlighting()
+void UI::Windows::OptionsButton::turnOffHighlighting()
 {
     wbkgd(m_window, COLOR_PAIR(3));
 }

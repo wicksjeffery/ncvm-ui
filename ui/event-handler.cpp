@@ -30,16 +30,18 @@ void UI::EventHandler::toggleOptionsSelector(bool options_selector_was_clicked =
 {
     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
 
-    if ( panel_hidden(collection.find("Options")->get_panel()) && options_selector_was_clicked)
+    if ( panel_hidden(collection.find("OptionsWindow")->get_panel()) && options_selector_was_clicked)
     {
-        show_panel(collection.find("Options")->get_panel());
-        show_panel(collection.find("ExitSelector")->get_panel());
-        collection.find("OptionsSelector")->turnOnHighlighting();
+        show_panel(collection.find("OptionsWindow")->get_panel());
+        show_panel(collection.find("About")->get_panel());
+        show_panel(collection.find("Exit")->get_panel());
+        collection.find("OptionsButton")->turnOnHighlighting();
     } else
     {
-        hide_panel(collection.find("Options")->get_panel());
-        hide_panel(collection.find("ExitSelector")->get_panel());
-        collection.find("OptionsSelector")->turnOffHighlighting();
+        hide_panel(collection.find("OptionsWindow")->get_panel());
+        hide_panel(collection.find("About")->get_panel());
+        hide_panel(collection.find("Exit")->get_panel());
+        collection.find("OptionsButton")->turnOffHighlighting();
     }
 }
 
@@ -69,32 +71,53 @@ int UI::EventHandler::listen(int n)
 
             if (mouse_event.bstate & BUTTON2_PRESSED)
             {
+
                 UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
 
                 auto pair = collection.findWindow(mouse_event.y, mouse_event.x);
 
                 if (pair.first != "")
                 {
-                    mvwprintw(collection.find("Help")->get_window(), 6, 25, "You clicked:                       ");
-                    mvwprintw(collection.find("Help")->get_window(), 6, 25, "You clicked: %s", pair.first.c_str());
+                    std::cout << "\a" << std::endl;
+                    // wattron(collection.find("Background")->get_window(), COLOR_PAIR(3));
+                    // mvwprintw(collection.find("Background")->get_window(), 1, 1, "You clicked:                       ");
+                    // mvwprintw(collection.find("Background")->get_window(), 1, 1, "You clicked: %s", pair.first.c_str());
+                    // wrefresh(collection.find("Background")->get_window());
+                    // wattroff(collection.find("Background")->get_window(), COLOR_PAIR(3));
 
-                    if (pair.first == "OptionsSelector")
+                    if (pair.first == "OptionsButton")
                     {
                         toggleOptionsSelector(true);
-                    } else if (pair.first == "ExitSelector")
+                    }
+                    else if (pair.first == "About")
                     {
-                        // mvwprintw(collection.find("Help")->get_window(), 6, 25, "You clicked:                       ");
-                        // mvwprintw(collection.find("Help")->get_window(), 6, 25, "You clicked: %s", pair.first.c_str());
-                        exit_program = true;
-                    } else
+                        toggleOptionsSelector(true);
+
+                        if (panel_hidden(collection.find("Information")->get_panel()))
+                        {
+                            show_panel(collection.find("Information")->get_panel());
+                        }
+                    }
+                    else if (pair.first == "Exit")
+                    {
+                        // mvwprintw(collection.find("Information")->get_window(), 6, 25, "You clicked:                       ");
+                        // mvwprintw(collection.find("Information")->get_window(), 6, 25, "You clicked: %s", pair.first.c_str());
+
+                        if (!panel_hidden(collection.find("Exit")->get_panel()))
+                        {
+                            exit_program = true;
+                        }
+                    }
+                    else
                     {
                         // Close options window if it is open.
                         toggleOptionsSelector();
                     }
-                } else
+                }
+                else
                 {
                     // It shouldn't be possible to get here. Maybe throw instead?
-                    mvwprintw(collection.find("Help")->get_window(), 6, 25, "EMPTY WINDOW");
+                    mvwprintw(collection.find("Background")->get_window(), 6, 25, "EMPTY WINDOW");
                 }
 
                 update_panels();

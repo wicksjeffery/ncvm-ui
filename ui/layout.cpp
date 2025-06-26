@@ -2,19 +2,23 @@
 #include "windows/collection.hpp"
 #include "windows/rectangle.hpp"
 #include "windows/background.hpp"
-#include "windows/help.hpp"
-#include "windows/options-selector.hpp"
-#include "windows/options.hpp"
-#include "windows/exit-selector.hpp"
+#include "windows/information.hpp"
+#include "windows/options-button.hpp"
+#include "windows/options-menu/options-window.hpp"
+#include "windows/options-menu/about.hpp"
+#include "windows/options-menu/exit.hpp"
 
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <typeinfo>
-// #include <fstream>
+#include <fstream>
 #include <cxxabi.h>
 
-UI::Layout::Layout(/*std::unordered_map<std::string, Windows::Rectangle*> all_windows*/)
+#include <stdexcept>
+
+
+UI::Layout::Layout()
 {
     initscr();
     cbreak();
@@ -33,31 +37,25 @@ UI::Layout::Layout(/*std::unordered_map<std::string, Windows::Rectangle*> all_wi
 
 
     using namespace Windows;
-    Rectangle* ptr;
+    using namespace MenuItems;
 
     save(new Background(LINES, COLS, 0, 0));
-    save(new Help(LINES-3, COLS-4, 2, 2));
-    save(new OptionsSelector(1, 9, 0, 0));
-    save(new Options(14, 15, 1, 0));
-    save(new ExitSelector(1, 12, 12, 1));
+    save(new Information(LINES-3, COLS-4, 2, 2));
+    save(new OptionsButton(1, 9, 0, 0));
+    save(new OptionsWindow(14, 15, 1, 0));
+    save(new Exit(1, 12, 10, 1));
+    save(new About(1, 12, 12, 1));
 
-    // ptr = new Windows::Background(LINES, COLS, 0, 0);
-    // // // all_windows.insert( {"Background", ptr} );
-    //
-    // // ptr = new Windows::Help(LINES-3, COLS-4, 2, 2);
-    // // all_windows.insert( {"Help", ptr} );
-    // // ptr = new Windows::OptionsSelector(1, 9, 0, 0);
-    // // all_windows.insert( {"OptionsSelector", ptr} );
-    // // ptr = new Windows::Options(20, 20, 1, 0);
-    // // all_windows.insert( {"Options", ptr} );
 
     update_panels();
     doupdate();
 }
 
-// std::ofstream outputFile;
+std::ofstream outputFile;
 void UI::Layout::save(Windows::Rectangle* w)
 {
+    // outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
+
     // BEGIN extra code to shorten lines of code in window instantiation (in UI::Layout::Layout().
     int status = -1; // Status of the demangling operation
     char* window_name = abi::__cxa_demangle(typeid(*w).name(), nullptr, nullptr, &status);
@@ -65,12 +63,20 @@ void UI::Layout::save(Windows::Rectangle* w)
     std::string child_class_name(window_name);
     if (status == 0)
     {
-        // std::string temp = child_class_name.substr(child_class_name.find_first_not_of("UI::Windows::"));
-        child_class_name = child_class_name.substr(child_class_name.find_first_not_of("UI::Windows::"));
+        std::string mask("UI::Windows::");
+
+        if (child_class_name.find("UI::Windows::MenuItems::")  != std::string::npos)
+        {
+            mask = "UI::Windows::MenuItems::";
+        }
+
+        // outputFile << child_class_name.substr(mask.length()) << std::endl;
+        child_class_name = child_class_name.substr(mask.length());
+
 
         std::free(window_name);
     } else {
-        throw("Name demangling failed");
+        throw std::runtime_error("Name demangling failed");
     }
     // BEGIN extra code to shorten lines of code in window instantiation.
 
@@ -79,16 +85,16 @@ void UI::Layout::save(Windows::Rectangle* w)
     // logger1.logMessage("First message from logger1.");
     collection.insert(child_class_name, w);
 
-    // outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
+
 //     for (auto const& [key, value]: m_windows)
 //     {
 //         // printw("%s", key.c_str());
 //
 //
-        // outputFile << "ok: " << collection.print() << std::flush;
+
 //     }
 
-    // outputFile << child_class_name << std::endl;
+
     // outputFile.close();
 
     // collection.printAll();

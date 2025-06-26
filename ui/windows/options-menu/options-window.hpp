@@ -1,15 +1,15 @@
-#ifndef OPTIONS_HPP
-#define OPTIONS_HPP
+#ifndef OPTIONS_WINDOW_HPP
+#define OPTIONS_WINDOW_HPP
 
 #include "rectangle.hpp"
 
 
 namespace UI::Windows
 {
-    class Options : public Rectangle
+    class OptionsWindow : public Rectangle
     {
     public:
-        Options(int height, int width, int begin_y, int begin_x);
+        OptionsWindow(int height, int width, int begin_y, int begin_x);
 
         void hello() const override
         {

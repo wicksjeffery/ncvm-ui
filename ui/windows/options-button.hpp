@@ -1,15 +1,15 @@
-#ifndef OPTONS_SELECTOR_HPP
-#define OPTONS_SELECTOR_HPP
+#ifndef OPTONS_BUTTON_HPP
+#define OPTONS_BUTTON_HPP
 
 #include "rectangle.hpp"
 
 
 namespace UI::Windows
 {
-    class OptionsSelector : public Rectangle
+    class OptionsButton : public Rectangle
     {
     public:
-        OptionsSelector(int height, int width, int begin_y, int begin_x);
+        OptionsButton(int height, int width, int begin_y, int begin_x);
 
         void toggleHighlighting() override;
         void turnOnHighlighting() override;
