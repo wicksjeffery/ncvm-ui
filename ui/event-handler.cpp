@@ -78,14 +78,27 @@ int UI::EventHandler::listen(int n)
 
                 if (pair.first != "")
                 {
-                    std::cout << "\a" << std::endl;
+                    // // std::cout << "\a" << std::endl;
                     // wattron(collection.find("Background")->get_window(), COLOR_PAIR(3));
                     // mvwprintw(collection.find("Background")->get_window(), 1, 1, "You clicked:                       ");
                     // mvwprintw(collection.find("Background")->get_window(), 1, 1, "You clicked: %s", pair.first.c_str());
                     // wrefresh(collection.find("Background")->get_window());
                     // wattroff(collection.find("Background")->get_window(), COLOR_PAIR(3));
 
-                    if (pair.first == "OptionsButton")
+                    if (pair.first == "One")
+                    {
+                        wattron(collection.find("One")->get_window(), COLOR_PAIR(6));
+                        wbkgd(collection.find("One")->get_window(), COLOR_PAIR(6));
+
+
+                        wattron(collection.find("One")->get_window(), COLOR_PAIR(6));
+                        // box(collection.find("One")->get_window(), 0, 0),
+                        mvwprintw(collection.find("One")->get_window(),
+                                  2,
+                                  3, "01234567890");
+                        wattroff(collection.find("One")->get_window(), COLOR_PAIR(6));
+                    }
+                    else if (pair.first == "OptionsButton")
                     {
                         toggleOptionsSelector(true);
                     }
@@ -100,8 +113,10 @@ int UI::EventHandler::listen(int n)
                     }
                     else if (pair.first == "Exit")
                     {
-                        // mvwprintw(collection.find("Information")->get_window(), 6, 25, "You clicked:                       ");
-                        // mvwprintw(collection.find("Information")->get_window(), 6, 25, "You clicked: %s", pair.first.c_str());
+                        // wattron(collection.find("Background")->get_window(), COLOR_PAIR(3));
+                        // mvwprintw(collection.find("Background")->get_window(), 16, 25, "You clicked:                       ");
+                        // mvwprintw(collection.find("Background")->get_window(), 16, 25, "You clicked: %s", pair.first.c_str());
+                        // wattroff(collection.find("Background")->get_window(), COLOR_PAIR(3));
 
                         if (!panel_hidden(collection.find("Exit")->get_panel()))
                         {

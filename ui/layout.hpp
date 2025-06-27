@@ -15,9 +15,6 @@ namespace UI
     public:
         Layout();
         ~Layout();
-
-        // //TODO make this private?
-        // std::unordered_map<std::string, Windows::Rectangle*> all_windows;
     };
 }
 #endif

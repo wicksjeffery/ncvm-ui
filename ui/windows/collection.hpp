@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <utility>
+// #include <vector>
 
 namespace UI::Windows
 {
@@ -45,7 +46,7 @@ namespace UI::Windows
             std::ofstream outputFile;
 
              // outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
-            outputFile.open("/tmp/debug.txt");
+            outputFile.open("/tmp/debug2.txt");
 
             for (auto const& [key, val] : m_windows)
             {
@@ -57,15 +58,28 @@ namespace UI::Windows
 
         std::pair<std::string, Windows::Rectangle*> findWindow(int y, int x)
         {
+            // printAll();
+            std::ofstream outputFile("/tmp/debug1.txt");
+
+            // std::vector clickable_items;
+
             for (const auto& pair : m_windows)
             {
                 if (wenclose(pair.second->get_window(), y, x) == true)
                 {
+                    if (pair.first == "Background" ||
+                        pair.first == "OptionsWindow" ||
+                        pair.first == "Information")
+                    {
+                        continue;
+                    }
+                    // Return only if OptionsWindow is hidden or not.
+                    outputFile << "key: " << pair.first << std::endl;
                     return pair;
                 }
 
             }
-
+            outputFile.close();
             return std::make_pair("", nullptr);
         }
 

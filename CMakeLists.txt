@@ -15,6 +15,12 @@ set(SRC_LIST
     ui/windows/rectangle.cpp
     ui/windows/background.cpp
     ui/windows/information.cpp
+    ui/windows/vm-control/vm-outter-frame.cpp
+    ui/windows/vm-control/vm-controller.cpp
+    ui/windows/vm-control/one.cpp
+    ui/windows/vm-control/two.cpp
+    ui/windows/vm-control/three.cpp
+    ui/windows/vm-control/four.cpp
     ui/windows/options-button.cpp
     ui/windows/options-menu/options-window.cpp
     ui/windows/options-menu/about.cpp

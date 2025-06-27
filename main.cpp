@@ -1,3 +1,5 @@
+// TODO: Do I need to check for memory leak after ctrl-c?
+
 #include "ui/layout.hpp"
 #include "ui/event-handler.hpp" //TODO fix typo in name
 #include <future>
