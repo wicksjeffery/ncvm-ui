@@ -24,7 +24,8 @@ set(SRC_LIST
     ui/windows/options-button.cpp
     ui/windows/options-menu/options-window.cpp
     ui/windows/options-menu/about.cpp
-    ui/windows/options-menu/exit.cpp)
+    ui/windows/options-menu/exit.cpp
+    vm/manager.cpp)
 
 set(CURSES_NEED_NCURSES TRUE)
 find_package(Curses REQUIRED)

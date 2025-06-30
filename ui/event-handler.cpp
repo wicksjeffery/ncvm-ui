@@ -87,15 +87,10 @@ int UI::EventHandler::listen(int n)
 
                     if (pair.first == "One")
                     {
-                        wattron(collection.find("One")->get_window(), COLOR_PAIR(6));
                         wbkgd(collection.find("One")->get_window(), COLOR_PAIR(6));
 
-
                         wattron(collection.find("One")->get_window(), COLOR_PAIR(6));
-                        // box(collection.find("One")->get_window(), 0, 0),
-                        mvwprintw(collection.find("One")->get_window(),
-                                  2,
-                                  3, "01234567890");
+                        mvwprintw(collection.find("One")->get_window(), 2, 3, "01234567890");
                         wattroff(collection.find("One")->get_window(), COLOR_PAIR(6));
                     }
                     else if (pair.first == "OptionsButton")

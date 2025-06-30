@@ -1,17 +1,18 @@
 // TODO: Do I need to check for memory leak after ctrl-c?
 
 #include "ui/layout.hpp"
-#include "ui/event-handler.hpp" //TODO fix typo in name
+#include "ui/event-handler.hpp"
+#include "vm/manager.hpp"
 #include <future>
 
 int main(/*int argc, char **argv*/)
 {
     try
     {
+        VM::Manager manager;
+        // UI::Layout layout(manager.getState());
         UI::Layout layout;
-        // UI::EventHandler events(&layout.all_windows);
         UI::EventHandler event_handler;
-        // UI::Layout layout(event_handler.m_windows);
 
 
         auto f1 = std::async(&UI::EventHandler::listen, &event_handler, 9);
