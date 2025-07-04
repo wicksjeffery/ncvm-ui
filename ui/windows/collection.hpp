@@ -41,20 +41,8 @@ namespace UI::Windows
             return (search != m_windows.end()) ? search->second : throw std::runtime_error("Collection: Key not found.");;
         }
 
-        void printAll() const
-        {
-            std::ofstream outputFile;
+        void printAll() const;
 
-             // outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
-            outputFile.open("/tmp/debug2.txt");
-
-            for (auto const& [key, val] : m_windows)
-            {
-                outputFile << "key: " << key << std::endl;
-            }
-
-             outputFile.close();
-        }
 
         std::pair<std::string, Windows::Rectangle*> findWindow(int y, int x)
         {
@@ -67,9 +55,9 @@ namespace UI::Windows
             {
                 if (wenclose(pair.second->get_window(), y, x) == true)
                 {
-                    if (pair.first == "Background" ||
-                        pair.first == "OptionsWindow" ||
-                        pair.first == "Information")
+                    if (pair.first == "UI::Windows::Background" ||
+                        pair.first == "UI::Windows::OptionsWindow" ||
+                        pair.first == "UI::Windows::Information")
                     {
                         continue;
                     }

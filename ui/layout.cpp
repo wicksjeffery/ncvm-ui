@@ -12,6 +12,12 @@
 #include "windows/options-menu/options-window.hpp"
 #include "windows/options-menu/about.hpp"
 #include "windows/options-menu/exit.hpp"
+#include "windows/journal/outter-frame.hpp"
+#include "windows/journal/inside.hpp"
+#include "windows/status/outter-frame.hpp"
+#include "windows/status/inside.hpp"
+
+#include "../logger.hpp"
 
 #include <cstdlib>
 #include <iostream>
@@ -29,6 +35,8 @@ UI::Layout::Layout()
     cbreak();
     curs_set(0);
     noecho();
+    scrollok(stdscr, false);
+    clearok(stdscr, false);
     keypad(stdscr, TRUE);
     mousemask(BUTTON1_RELEASED | BUTTON2_PRESSED, NULL);
 
@@ -43,8 +51,10 @@ UI::Layout::Layout()
 
 
     using namespace Windows;
-    using namespace MenuItems;
-    using namespace VMControl;
+    // using namespace MenuItems;
+    // using namespace VMControl;
+    // using namespace Status;
+    // using namespace Journal;
 
     // BEGIN: setup for vm windows
     // std::ofstream outputFile("/tmp/debug.txt");
@@ -109,27 +119,30 @@ UI::Layout::Layout()
     // outputFile.close();
 
     save(new Background(LINES, COLS, 0, 0));
-    save(new VMOutterFrame(8, COLS-4, 2, 2));
-    save(new One(first_vm_start_x));
-    save(new Two(second_vm_start_x));
-    save(new Three(third_vm_start_x));
-    save(new Four(fourth_vm_start_x));
+    save(new VMControl::VMOutterFrame(8, COLS-4, 2, 2));
+    save(new VMControl::One(first_vm_start_x));
+    save(new VMControl::Two(second_vm_start_x));
+    save(new VMControl::Three(third_vm_start_x));
+    save(new VMControl::Four(fourth_vm_start_x));
     save(new Information(LINES-3, COLS-4, 2, 2));
     save(new OptionsButton(1, 9, 0, 0));
     save(new OptionsWindow(14, 15, 1, 0));
-    save(new Exit(1, 12, 10, 1));
-    save(new About(1, 12, 12, 1));
+    save(new MenuItems::Exit(1, 12, 10, 1));
+    save(new MenuItems::About(1, 12, 12, 1));
+    save(new Journal::OutterFrame(LINES-20, COLS-4, 11, 2));
+    save(new Journal::Inside(LINES-23, COLS-11, 12, 5));
+    save(new Status::OutterFrame(7, COLS-4, LINES-8, 2));
+    save(new Status::Inside(4, COLS-11, LINES-7, 5)); //TODO leave the namespace for clarity.
 
 
-
-    UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
+    // UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
     // //
-    wattron(collection.find("One")->get_window(), COLOR_PAIR(3));
+    // wattron(collection.find("One")->get_window(), COLOR_PAIR(3));
     // box(collection.find("One")->get_window(), 0, 0),
-    mvwprintw(collection.find("One")->get_window(),
-              2,
-              3, "01234567890");
-    wattroff(collection.find("One")->get_window(), COLOR_PAIR(3));
+    // mvwprintw(collection.find("One")->get_window(),
+              // 2,
+              // 3, "01234567890");
+    // wattroff(collection.find("One")->get_window(), COLOR_PAIR(3));
     // wattron(collection.find("Two")->get_window(), COLOR_PAIR(3));
     // box(collection.find("Two")->get_window(), 0, 0),
     // wattron(collection.find("Three")->get_window(), COLOR_PAIR(3));
@@ -158,36 +171,55 @@ UI::Layout::Layout()
               // 4, "012345678901");
     // wattroff(collection.find("VMOutterFrame")->get_window(), COLOR_PAIR(3));
 
+
+
+    // Announce to logging that all the windows are created.
+    // Logger& logger = Logger::getInstance(); //TODO write to application log that ncvm-ui is started.
+    // Logger::getInstance();
+    // logger.write("key");
+
+    // Uncomment to see what's in the collection:
+    // UI::Windows::Collection::getInstance().printAll();
+
     update_panels();
     doupdate();
 }
 
-std::ofstream outputFile;
 void UI::Layout::save(Windows::Rectangle* w)
 {
+    std::ofstream outputFile;
     // if (dont_save == true) return; // Don't save windows that aren't selectable.
-    // outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
+    outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
 
     // BEGIN extra code to shorten lines of code in window instantiation (in UI::Layout::Layout().
     int status = -1; // Status of the demangling operation
     char* window_name = abi::__cxa_demangle(typeid(*w).name(), nullptr, nullptr, &status);
 
     std::string child_class_name(window_name);
+    // outputFile << child_class_name << std::endl;
     if (status == 0)
     {
-        std::string mask("UI::Windows::");
+        // std::string mask("UI::Windows::");
 
-        if (child_class_name.find("UI::Windows::MenuItems::")  != std::string::npos)
-        {
-            mask = "UI::Windows::MenuItems::";
-        }
-        if (child_class_name.find("UI::Windows::VMControl::")  != std::string::npos)
-        {
-            mask = "UI::Windows::VMControl::";
-        }
+        // if (child_class_name.find("UI::Windows::MenuItems::")  != std::string::npos)
+        // {
+        //     mask = "UI::Windows::MenuItems::";
+        // }
+        // if (child_class_name.find("UI::Windows::VMControl::")  != std::string::npos)
+        // {
+        //     mask = "UI::Windows::VMControl::";
+        // }
+        // if (child_class_name.find("UI::Windows::Status::")  != std::string::npos)
+        // {
+        //     mask = "UI::Windows::Status::";
+        // }
+        // if (child_class_name.find("UI::Windows::Journal::")  != std::string::npos)
+        // {
+        //     mask = "UI::Windows::Journal::";
+        // }
 
-        // outputFile << child_class_name.substr(mask.length()) << std::endl;
-        child_class_name = child_class_name.substr(mask.length());
+        // child_class_name = child_class_name.substr(mask.length());
+        // outputFile << child_class_name << std::endl;
 
 
         std::free(window_name);
@@ -196,7 +228,7 @@ void UI::Layout::save(Windows::Rectangle* w)
     }
     // BEGIN extra code to shorten lines of code in window instantiation.
 
-
+    outputFile << child_class_name << std::endl;
     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
     // logger1.logMessage("First message from logger1.");
     collection.insert(child_class_name, w);
@@ -211,7 +243,7 @@ void UI::Layout::save(Windows::Rectangle* w)
 //     }
 
 
-    // outputFile.close();
+    outputFile.close();
 
     // collection.printAll();
 }

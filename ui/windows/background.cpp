@@ -11,5 +11,7 @@ UI::Windows::Background::Background(int height, int width, int begin_y, int begi
     wattron(m_window, COLOR_PAIR(2));
     mvwhline(m_window, 0, 0, ' ', width);
     wattroff(m_window, COLOR_PAIR(2));
+
+    // scrollok(m_window, false);
 }
 

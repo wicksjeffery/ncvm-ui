@@ -9,7 +9,7 @@ namespace VM
     public:
         Manager();
 
-        void validateSavedConfig();
+        // void validateSavedConfig();
     };
 }
 

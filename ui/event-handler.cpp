@@ -3,6 +3,7 @@
 #include "windows/collection.hpp"
 #include <curses.h>
 #include <fstream>
+#include <thread>
 
 // UI::EventHandler::EventHandler(std::unordered_map<std::string, Windows::Rectangle*> *w)
 //     :
@@ -30,25 +31,29 @@ void UI::EventHandler::toggleOptionsSelector(bool options_selector_was_clicked =
 {
     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
 
-    if ( panel_hidden(collection.find("OptionsWindow")->get_panel()) && options_selector_was_clicked)
+    if ( panel_hidden(collection.find("UI::Windows::OptionsWindow")->get_panel()) && options_selector_was_clicked)
     {
-        show_panel(collection.find("OptionsWindow")->get_panel());
-        show_panel(collection.find("About")->get_panel());
-        show_panel(collection.find("Exit")->get_panel());
-        collection.find("OptionsButton")->turnOnHighlighting();
+        show_panel(collection.find("UI::Windows::OptionsWindow")->get_panel());
+        show_panel(collection.find("UI::Windows::MenuItems::About")->get_panel());
+        show_panel(collection.find("UI::Windows::MenuItems::Exit")->get_panel());
+        collection.find("UI::Windows::OptionsButton")->turnOnHighlighting();
     } else
     {
-        hide_panel(collection.find("OptionsWindow")->get_panel());
-        hide_panel(collection.find("About")->get_panel());
-        hide_panel(collection.find("Exit")->get_panel());
-        collection.find("OptionsButton")->turnOffHighlighting();
+        hide_panel(collection.find("UI::Windows::OptionsWindow")->get_panel());
+        hide_panel(collection.find("UI::Windows::MenuItems::About")->get_panel());
+        hide_panel(collection.find("UI::Windows::MenuItems::Exit")->get_panel());
+        collection.find("UI::Windows::OptionsButton")->turnOffHighlighting();
     }
 }
 
 
 int UI::EventHandler::listen(int n)
 {
-    std::ofstream outputFile;
+    // std::ofstream f("/tmp/foo1", std::fstream::trunc);
+    //
+    // f << "okpeT: " << std::hex << std::this_thread::get_id() << std::endl;
+    // f.close();
+    // std::cout << "\a";
 
     MEVENT mouse_event;
 
@@ -67,55 +72,64 @@ int UI::EventHandler::listen(int n)
                  */
 
                 std::cout << std::endl;
+                refresh();
             }
 
             if (mouse_event.bstate & BUTTON2_PRESSED)
             {
-
+                // std::cout << "\a" << std::endl;
                 UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
 
                 auto pair = collection.findWindow(mouse_event.y, mouse_event.x);
 
                 if (pair.first != "")
                 {
-                    // // std::cout << "\a" << std::endl;
-                    // wattron(collection.find("Background")->get_window(), COLOR_PAIR(3));
-                    // mvwprintw(collection.find("Background")->get_window(), 1, 1, "You clicked:                       ");
-                    // mvwprintw(collection.find("Background")->get_window(), 1, 1, "You clicked: %s", pair.first.c_str());
-                    // wrefresh(collection.find("Background")->get_window());
-                    // wattroff(collection.find("Background")->get_window(), COLOR_PAIR(3));
+                    // std::cout << "\a" << std::endl;
+                    //     // redrawwin(stdscr);
+                    // clear();
+                    // refresh(); // Clears mouse-paste that can happen from the middle button - screws up the screen.
+                    //
+                    //     // redrawwin();
+                    // wattron(collection.find("UI::Windows::Status::Inside")->get_window(), COLOR_PAIR(3));
+                    // mvwprintw(collection.find("UI::Windows::Status::Inside")->get_window(), 1, 1, "You clicked:                       ");
+                    // mvwprintw(collection.find("UI::Windows::Status::Inside")->get_window(), 1, 1, "You clicked: %s", pair.first.c_str());
+                    // wrefresh(collection.find("UI::Windows::Status::Inside")->get_window());
+                    // wattroff(collection.find("UI::Windows::Status::Inside")->get_window(), COLOR_PAIR(3));
 
-                    if (pair.first == "One")
+                    if (pair.first == "UI::Windows::VMControl::One")
                     {
-                        wbkgd(collection.find("One")->get_window(), COLOR_PAIR(6));
-
-                        wattron(collection.find("One")->get_window(), COLOR_PAIR(6));
-                        mvwprintw(collection.find("One")->get_window(), 2, 3, "01234567890");
-                        wattroff(collection.find("One")->get_window(), COLOR_PAIR(6));
+                        // std::cout << "\a" << std::endl;
+                        // wattron(collection.find("UI::Windows::Status::Inside")->get_window(), COLOR_PAIR(3));
+                        // mvwprintw(collection.find("UI::Windows::Status::Inside")->get_window(), 1, 1, "You clicked:                       ");
+                        // mvwprintw(collection.find("UI::Windows::Status::Inside")->get_window(), 1, 1, "You clicked: %s", pair.first.c_str());
+                        // wrefresh(collection.find("UI::Windows::Status::Inside")->get_window());
+                        // wattroff(collection.find("UI::Windows::Status::Inside")->get_window(), COLOR_PAIR(3));
+                        // wrefresh(collection.find("UI::Windows::Status::Inside")->get_window());
                     }
-                    else if (pair.first == "OptionsButton")
+                    else if (pair.first == "UI::Windows::OptionsButton")
                     {
                         toggleOptionsSelector(true);
                     }
-                    else if (pair.first == "About")
+                    else if (pair.first == "UI::Windows::MenuItems::About")
                     {
                         toggleOptionsSelector(true);
 
-                        if (panel_hidden(collection.find("Information")->get_panel()))
+                        if (panel_hidden(collection.find("UI::Windows::Information")->get_panel()))
                         {
-                            show_panel(collection.find("Information")->get_panel());
+                            show_panel(collection.find("UI::Windows::Information")->get_panel());
                         }
                     }
-                    else if (pair.first == "Exit")
+                    else if (pair.first == "UI::Windows::MenuItems::Exit")
                     {
                         // wattron(collection.find("Background")->get_window(), COLOR_PAIR(3));
                         // mvwprintw(collection.find("Background")->get_window(), 16, 25, "You clicked:                       ");
                         // mvwprintw(collection.find("Background")->get_window(), 16, 25, "You clicked: %s", pair.first.c_str());
                         // wattroff(collection.find("Background")->get_window(), COLOR_PAIR(3));
 
-                        if (!panel_hidden(collection.find("Exit")->get_panel()))
+                        if (!panel_hidden(collection.find("UI::Windows::MenuItems::Exit")->get_panel()))
                         {
-                            exit_program = true;
+                            // exit_program = true;
+                            return 0;
                         }
                     }
                     else
@@ -127,12 +141,20 @@ int UI::EventHandler::listen(int n)
                 else
                 {
                     // It shouldn't be possible to get here. Maybe throw instead?
-                    mvwprintw(collection.find("Background")->get_window(), 6, 25, "EMPTY WINDOW");
+                    mvwprintw(collection.find("UI::Windows::Background")->get_window(), 6, 25, "EMPTY WINDOW");
                 }
 
                 update_panels();
                 doupdate();
             }
+            // else
+            // {
+            //     // redrawwin(stdscr);
+            //     clear();
+            //     refresh();
+            //
+            //     // redrawwin();
+            // }
         }
     }
     return 1; //returning arbitrary value (not used yet)
