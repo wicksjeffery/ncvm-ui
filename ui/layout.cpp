@@ -17,7 +17,7 @@
 #include "windows/status/outter-frame.hpp"
 #include "windows/status/inside.hpp"
 
-#include "../logger.hpp"
+#include "../logging/manager.hpp"
 
 #include <cstdlib>
 #include <iostream>

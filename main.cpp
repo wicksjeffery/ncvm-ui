@@ -1,23 +1,23 @@
 // TODO: Do I need to check for memory leak after ctrl-c?
 
-#include "logger.hpp"
+// #include "logger.hpp"
 #include "ui/layout.hpp"
 #include "ui/event-handler.hpp"
 #include "vm/manager.hpp"
+#include "logging/manager.hpp"
 #include <future>
 #include <fstream>
 #include <thread>
+
 int main(/*int argc, char **argv*/)
 {
     try
     {
         UI::Layout layout;
         // VM::Manager manager;
-        Logger& logger = Logger::getInstance();
+        Logging::Manager& log_mgr = Logging::Manager::getInstance();
 
-        // logger.run(3);
-        std::thread logger_thread(&Logger::run, &logger, 9);
-        // logger_thread.detach();
+        std::thread logger_thread(&Logging::Manager::run, &log_mgr, 9);
 
         UI::EventHandler event_handler;
 
@@ -34,7 +34,7 @@ int main(/*int argc, char **argv*/)
         if (f1.get() == 0)
         {
             //This will be when exit was called from EventHandler. Then close logger.
-            logger.quit();
+            log_mgr.quit();
             logger_thread.join();
 
             return 0;

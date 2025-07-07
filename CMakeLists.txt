@@ -9,7 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SRC_LIST
     main.cpp
-    logger.cpp
+    logging/manager.cpp
+    logging/sdj.cpp
     ui/layout.cpp
     ui/event-handler.cpp
     ui/windows/collection.cpp

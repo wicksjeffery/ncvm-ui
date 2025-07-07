@@ -1,5 +1,5 @@
 #include "collection.hpp"
-#include "../logger.hpp"
+#include "../logging/manager.hpp"
 
 UI::Windows::Collection& UI::Windows::Collection::getInstance()
 {
@@ -23,7 +23,7 @@ UI::Windows::Collection::~Collection()
 
 void UI::Windows::Collection::printAll() const
 {
-    Logger& logger = Logger::getInstance();
+    Logging::Manager& logger = Logging::Manager::getInstance();
 
     for (auto const& [key, val] : m_windows)
     {
