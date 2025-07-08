@@ -10,7 +10,7 @@
 #include <systemd/sd-journal.h>
 #include <array>
 #include "sdj.hpp"
-
+#include <unordered_map>
 namespace Logging
 {
 
@@ -40,6 +40,8 @@ namespace Logging
         void runSDJ1();
         void runSDJ1OLD2();
 
+        // std::unordered_map<SDJ(const char*), unsigned short> m_sdjs;
+        // std::unordered_map<unsigned short, SDJ(const char*)> m_sdjs;
 
     public:
         // Static method to get the single instance of Manager
@@ -85,3 +87,4 @@ namespace Logging
     };
 }
 #endif
+

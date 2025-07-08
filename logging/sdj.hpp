@@ -9,6 +9,7 @@ namespace Logging
     // Systemd Journal
     class SDJ
     {
+        int utility_value;
 
     public:
         sd_journal *j;
@@ -19,6 +20,15 @@ namespace Logging
 
         bool getNext();
 
+        void setOperationResult(bool r)
+        {
+            utility_value = r;
+        }
+
+        int getOperationResult() const
+        {
+            return utility_value;
+        }
     };
 }
 
