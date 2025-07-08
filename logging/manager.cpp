@@ -490,25 +490,10 @@ int Logging::Manager::run(int n = 0)
 
     while (running)
     {
-        // for (const auto& sdj : sdjs)
         for (auto& sdj : sdjs)
         {
             sdj.setOperationResult(sdj.getNext());
         }
-
-        // int rx0 = sdj0.getNext();
-        // int rx1 = sdj1.getNext();
-        // int rx2 = sdj2.getNext();
-        // int rx3 = sdj3.getNext();
-        // int rx4 = sdj4.getNext();
-
-
-        // if (rx0 == 0 && rx1 == 0 && rx2 == 0 && rx3 == 0 && rx4 == 0) {continue;} //No new logs found
-
-        // for (size_t i = 0; i < sdjs.size(); ++i)
-        // {
-        //     sdj.getOperationResult();
-        // }
 
         int new_journal_entries_found = 0;
         for (auto& sdj : sdjs)
@@ -522,137 +507,33 @@ int Logging::Manager::run(int n = 0)
             continue;
         }
 
-        for (auto& sdj : sdjs)
+        for (int i = sdjs.size() - 1; i >= 0; --i)
+        // for (auto& sdj : sdjs) // TODO run this backwards
         {
-            if (sdj.getOperationResult() == 1)
+            if (sdjs[i].getOperationResult() == 1)
             {
-                const void *d;
-                size_t l;
+                // const void *d;
+                // size_t l;
+                //
+                // int r3  = sd_journal_get_data(sdj.j, "MESSAGE", &d, &l);
+                //
+                // if (r3 < 0)
+                // {
+                //     std::stringstream ss;
+                //     ss << "Failed to read message field: " << strerror(-r3) << std::endl;
+                //     throw(std::runtime_error(ss.str()));
+                // }
 
-                int r3  = sd_journal_get_data(sdj.j, "MESSAGE", &d, &l);
-
-                if (r3 < 0)
-                {
-                    std::stringstream ss;
-                    ss << "Failed to read message field: " << strerror(-r3) << std::endl;
-                    throw(std::runtime_error(ss.str()));
-                }
+                // sdj.getData();
 
                 UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
 
-                wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%.*s\n", (int) l, (const char*) d);
+                // wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%.*s\n", (int) l, (const char*) d);
+                wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%s\n", sdjs[i].getData().c_str());
                 wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
             }
         }
-
-
-        // if (rx0 == 1)
-        // {
-        //     const void *d;
-        //     size_t l;
-        //
-        //     int r3  = sd_journal_get_data(sdj0.j, "MESSAGE", &d, &l);
-        //
-        //     if (r3 < 0)
-        //     {
-        //         std::stringstream ss;
-        //         ss << "Failed to read message field: " << strerror(-r3) << std::endl;
-        //         throw(std::runtime_error(ss.str()));
-        //     }
-        //
-        //     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-        //
-        //     wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%.*s\n", (int) l, (const char*) d);
-        //     wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
-        // }
-        //
-        // if (rx1 == 1)
-        // {
-        //     const void *d;
-        //     size_t l;
-        //
-        //     int r3  = sd_journal_get_data(sdj1.j, "MESSAGE", &d, &l);
-        //
-        //     if (r3 < 0)
-        //     {
-        //         std::stringstream ss;
-        //         ss << "Failed to read message field: " << strerror(-r3) << std::endl;
-        //         throw(std::runtime_error(ss.str()));
-        //     }
-        //
-        //     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-        //
-        //     wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%.*s\n", (int) l, (const char*) d);
-        //     wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
-        // }
-        //
-        // if (rx2 == 1)
-        // {
-        //     const void *d;
-        //     size_t l;
-        //
-        //     int r3  = sd_journal_get_data(sdj2.j, "MESSAGE", &d, &l);
-        //
-        //     if (r3 < 0)
-        //     {
-        //         std::stringstream ss;
-        //         ss << "Failed to read message field: " << strerror(-r3) << std::endl;
-        //         throw(std::runtime_error(ss.str()));
-        //     }
-        //
-        //     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-        //
-        //     wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%.*s\n", (int) l, (const char*) d);
-        //     wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
-        // }
-        //
-        // if (rx3 == 1)
-        // {
-        //     const void *d;
-        //     size_t l;
-        //
-        //     int r3  = sd_journal_get_data(sdj3.j, "MESSAGE", &d, &l);
-        //
-        //     if (r3 < 0)
-        //     {
-        //         std::stringstream ss;
-        //         ss << "Failed to read message field: " << strerror(-r3) << std::endl;
-        //         throw(std::runtime_error(ss.str()));
-        //     }
-        //
-        //     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-        //
-        //     wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%.*s\n", (int) l, (const char*) d);
-        //     wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
-        // }
-        //
-        // if (rx4 == 1)
-        // {
-        //     const void *d;
-        //     size_t l;
-        //
-        //     int r3  = sd_journal_get_data(sdj4.j, "MESSAGE", &d, &l);
-        //
-        //     if (r3 < 0)
-        //     {
-        //         std::stringstream ss;
-        //         ss << "Failed to read message field: " << strerror(-r3) << std::endl;
-        //         throw(std::runtime_error(ss.str()));
-        //     }
-        //
-        //     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-        //
-        //     wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%.*s\n", (int) l, (const char*) d);
-        //     wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
-        // }
-
-
-
-    }/*
-
-    }*/
-
-    // }
+    }
 
     return 0;
 }

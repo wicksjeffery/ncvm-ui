@@ -11,6 +11,8 @@ namespace Logging
     {
         int utility_value;
 
+        const char* _priority_level;
+
     public:
         sd_journal *j;
 
@@ -29,6 +31,13 @@ namespace Logging
         {
             return utility_value;
         }
+
+        const char* getPriorityLevel() const
+        {
+            return _priority_level;
+        }
+
+        std::string getData();
     };
 }
 
