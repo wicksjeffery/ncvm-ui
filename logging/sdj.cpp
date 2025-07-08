@@ -134,7 +134,15 @@ bool Logging::SDJ::getNext()
     }
     else if (r1 == 0)
     {
-        int r2 = sd_journal_wait(j, (uint64_t) 10000);
+        /**
+         * @brief SD_JOURNAL_GET_FD(3)
+         *
+         * int sd_journal_wait(sd_journal *j, uint64_t timeout_usec);
+         *
+         * If no new journal entries are found, wait timeout_usec. I
+         * don't wait indefinately so I can process all four entries.
+         */
+        int r2 = sd_journal_wait(j, (uint64_t) 100000);
 
         if (r2 < 0)
         {
