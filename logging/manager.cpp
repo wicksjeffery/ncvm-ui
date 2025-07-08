@@ -487,52 +487,145 @@ int Logging::Manager::run(int n = 0)
         SDJ("PRIORITY=3"),
         SDJ("PRIORITY=4")
     };
+    std::ofstream outputFile;
+    outputFile.open("/tmp/debug3.txt", std::ofstream::out | std::ofstream::app);
+
+    std::string::size_type found_pos;
+
+    UI::Windows::Collection& collection = UI::Windows::Collection::getInstance(); //TODO: don't do this every time'
 
     while (running)
     {
-        for (auto& sdj : sdjs)
+        // int rx0 = sdj0.getNext();
+        // int rx1 = sdj1.getNext();
+        // int rx2 = sdj2.getNext();
+        // int rx3 = sdj3.getNext();
+        // int rx4 = sdj4.getNext();
+
+
+
+        // for (auto& sdj : sdjs)
+        for (int i = 0; i < sdjs.size(); i++)
         {
-            sdj.setOperationResult(sdj.getNext());
+            sdjs[i].setOperationResult(sdjs[i].getNext());
         }
 
-        int new_journal_entries_found = 0;
-        for (auto& sdj : sdjs)
+        // int new_journal_entries_found = 0;
+        // for (auto& sdj : sdjs)
+        for (int i = 0; i < sdjs.size(); i++)
         {
-            new_journal_entries_found = sdj.getOperationResult();
+            if (sdjs[i].getOperationResult()) goto NEWLOGFILESFOUND;
         }
 
-        if (new_journal_entries_found == 0)
-        {
-            // No new entries so go back to the top.
-            continue;
-        }
+        continue;
 
+        NEWLOGFILESFOUND:
+        // if (new_journal_entries_found == 0)
+        // {
+        //     // No new entries so go back to the top.
+        //     continue;
+        // }
+
+        // if (rx0 == 0 && rx1 == 0 && rx2 == 0 && rx3 == 0 && rx4 == 0) {continue;}
+
+
+        // for (int i = 0; i < sdjs.size(); i++)
         for (int i = sdjs.size() - 1; i >= 0; --i)
-        // for (auto& sdj : sdjs) // TODO run this backwards
+        // for (auto sdj : sdjs) // TODO run this backwards
         {
-            if (sdjs[i].getOperationResult() == 1)
+
+        if (sdjs[i].getOperationResult() == 1)
+            // if (sdj.getOperationResult() == 1)
             {
-                // const void *d;
-                // size_t l;
-                //
-                // int r3  = sd_journal_get_data(sdj.j, "MESSAGE", &d, &l);
-                //
-                // if (r3 < 0)
-                // {
-                //     std::stringstream ss;
-                //     ss << "Failed to read message field: " << strerror(-r3) << std::endl;
-                //     throw(std::runtime_error(ss.str()));
-                // }
+
+
+                // outputFile << "hello" << std::endl;
+                // outputFile.close();
 
                 // sdj.getData();
+                // found_pos = sdjs[i].getData().find("4=", 0);
 
-                UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
 
-                // wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%.*s\n", (int) l, (const char*) d);
-                wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%s\n", sdjs[i].getData().c_str());
-                wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
-            }
+
+                if (found_pos == std::string::npos)
+                {
+                    throw(std::runtime_error("Programming error: NO PRIORITIES FOUND."));
+                }
+                if (sdjs[i].getData().find("4=", 0) != std::string::npos)
+                {
+                    // Lowest priority, set least important-looking color.
+                    wattron(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(2) | A_BOLD);
+                    wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%s\n", sdjs[i].getData().c_str());
+                    wattroff(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(2) | A_BOLD);
+                    wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
+
+                    continue;
+                }
+
+                else if (sdjs[i].getData().find("3=", 0) != std::string::npos)
+                {
+                    wattron(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(7) | A_BOLD);
+                    wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%s\n", sdjs[i].getData().c_str());
+                    wattroff(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(7) | A_BOLD);
+                    wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
+                }
+
+                found_pos = sdjs[i].getData().find("2", 0);
+
+                if (found_pos == std::string::npos)
+                {
+                    throw(std::runtime_error("Programming error: NO PRIORITIES FOUND."));
+                }
+                else
+                {
+                    // init_pair(7, COLOR_WHITE, COLOR_RED);
+                    wattron(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(7));
+                    wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%s\n", sdjs[i].getData().c_str());
+                    wattroff(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(7));
+                    wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
+                }
+
+                found_pos = sdjs[i].getData().find("1", 0);
+
+                if (found_pos == std::string::npos)
+                {
+                    throw(std::runtime_error("Programming error: NO PRIORITIES FOUND."));
+                }
+                else
+                {
+                    // init_pair(7, COLOR_WHITE, COLOR_RED);
+                    wattron(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(7));
+                    wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%s\n", sdjs[i].getData().c_str());
+                    wattroff(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(7));
+                    wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
+                }
+
+                found_pos = sdjs[i].getData().find("0", 0);
+
+                if (found_pos == std::string::npos)
+                {
+                    throw(std::runtime_error("Programming error: NO PRIORITIES FOUND."));
+                }
+                else
+                {
+                    // init_pair(7, COLOR_WHITE, COLOR_RED);
+                    wattron(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(7));
+                    wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%s\n", sdjs[i].getData().c_str());
+                    wattroff(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(7));
+                    wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
+                }
+
+                // std::string test = sdjs[i].getData();
+                // outputFile << test << std::endl;
+                //
+                // wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%s\n", sdjs[i].getData().c_str());
+                // // // wattroff(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(7));
+                // wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
+            }// else continue;
         }
+
+        // // throw(std::runtime_error("All done"));
+
     }
 
     return 0;

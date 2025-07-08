@@ -3,7 +3,7 @@
 
 #include <systemd/sd-journal.h>
 #include <string>
-
+#include <fstream>
 namespace Logging
 {
     // Systemd Journal
@@ -25,10 +25,17 @@ namespace Logging
         void setOperationResult(bool r)
         {
             utility_value = r;
+
+
         }
 
         int getOperationResult() const
         {
+            // std::ofstream outputFile;
+
+            // outputFile.open("/tmp/debug3.txt", std::ofstream::out | std::ofstream::app);
+
+            // outputFile << _priority_level << " " << utility_value << std::endl;
             return utility_value;
         }
 

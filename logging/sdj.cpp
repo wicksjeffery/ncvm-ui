@@ -31,6 +31,7 @@ Logging::SDJ::SDJ(const char* priority_level)
         throw(std::runtime_error(ss.str()));
     }
 
+    //BEGIN only new
     // return_code = sd_journal_seek_tail(j);
     //
     // if (return_code < 0)
@@ -49,7 +50,9 @@ Logging::SDJ::SDJ(const char* priority_level)
     //     // continue;
     //     throw(std::runtime_error(ss.str()));
     // }
+    //END only new
 
+    //BEGIN since last boot
     sd_id128_t boot_id;
     // uint64_t monotonic_timestamp;
     return_code = sd_id128_get_boot(&boot_id);
@@ -67,7 +70,7 @@ Logging::SDJ::SDJ(const char* priority_level)
         ss << "SDJ FAIL: sd_journal_seek_monotonic_usec: " << strerror(-return_code) << std::endl;
         throw(std::runtime_error(ss.str()));
     }
-
+    //END since last boot
 
 
 
@@ -148,9 +151,9 @@ bool Logging::SDJ::getNext()
 
 std::string Logging::SDJ::getData()
 {
-    std::ofstream outputFile;
+    // std::ofstream outputFile;
 
-    outputFile.open("/tmp/debug3.txt", std::ofstream::out | std::ofstream::app);
+    // outputFile.open("/tmp/debug3.txt", std::ofstream::out | std::ofstream::app);
 
     const void *d;
     size_t l;
@@ -167,42 +170,46 @@ std::string Logging::SDJ::getData()
 
     std::string str((const char*)d);
 
-    std::string::size_type found_pos;
-    found_pos = str.find(field);
+    // outputFile << (const char*)d << std::endl;
+    // outputFile.close();
 
-    if (found_pos != std::string::npos)
-    {
-        str = str.substr(field.length());
-
-        if (strcmp(_priority_level, "PRIORITY=0") == 0)
-        {
-            str.insert(0, "0");
-        }
-        else if (strcmp(_priority_level, "PRIORITY=1") == 0)
-        {
-            str.insert(0, "1");
-        }
-        else if (strcmp(_priority_level, "PRIORITY=2") == 0)
-        {
-            str.insert(0, "2");
-        }
-        else if (strcmp(_priority_level, "PRIORITY=3") == 0)
-        {
-            str.insert(0, "3");
-        }
-        else if (strcmp(_priority_level, "PRIORITY=4") == 0)
-        {
-            str.insert(0, "4");
-        }
-        else throw("Programming error: NO STRINGS MATCH.");;
-
-
-    } else
-    {
-        std::stringstream ss;
-        ss << field << " not found: " << std::endl;
-        throw(std::runtime_error(ss.str()));
-    }
+    // std::string::size_type found_pos;
+    // found_pos = str.find(field, 0);
+    //
+    // if (found_pos != std::string::npos)
+    // {
+    //
+    //     str = str.substr(field.length());
+    //
+    //     if (strcmp(_priority_level, "PRIORITY=0") == 0)
+    //     {
+    //         str.insert(0, "0");
+    //     }
+    //     else if (strcmp(_priority_level, "PRIORITY=1") == 0)
+    //     {
+    //         str.insert(0, "1");
+    //     }
+    //     else if (strcmp(_priority_level, "PRIORITY=2") == 0)
+    //     {
+    //         str.insert(0, "2");
+    //     }
+    //     else if (strcmp(_priority_level, "PRIORITY=3") == 0)
+    //     {
+    //         str.insert(0, "3");
+    //     }
+    //     else if (strcmp(_priority_level, "PRIORITY=4") == 0)
+    //     {
+    //         str.insert(0, "4");
+    //     }
+    //     else throw("Programming error: NO STRINGS MATCH.");;
+    //
+    //
+    // } else
+    // {
+    //     std::stringstream ss;
+    //     ss << field << " not found: " << std::endl;
+    //     throw(std::runtime_error(ss.str()));
+    // }
 
     return str;
 }
