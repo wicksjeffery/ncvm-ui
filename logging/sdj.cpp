@@ -32,44 +32,44 @@ Logging::SDJ::SDJ(const char* priority_level)
     }
 
     //BEGIN only new
-    // return_code = sd_journal_seek_tail(j);
-    //
-    // if (return_code < 0)
-    // {
-    //     // fprintf(stderr, "Failed to open journal: %s\n", strerror(-return_code)); //TODO: throw instead.
-    //     std::stringstream ss;
-    //     ss << "Journal failed to seek to end: " << strerror(-return_code) << std::endl;
-    //     // continue;
-    //     throw(std::runtime_error(ss.str()));
-    // }
-    //
-    // return_code = sd_journal_previous(j); // Move to the last valid entry
-    // if (return_code < 0) {
-    //     std::stringstream ss;
-    //     ss << "Journal failed to seek to end: " << strerror(-return_code) << std::endl;
-    //     // continue;
-    //     throw(std::runtime_error(ss.str()));
-    // }
+    return_code = sd_journal_seek_tail(j);
+
+    if (return_code < 0)
+    {
+        // fprintf(stderr, "Failed to open journal: %s\n", strerror(-return_code)); //TODO: throw instead.
+        std::stringstream ss;
+        ss << "Journal failed to seek to end: " << strerror(-return_code) << std::endl;
+        // continue;
+        throw(std::runtime_error(ss.str()));
+    }
+
+    return_code = sd_journal_previous(j); // Move to the last valid entry
+    if (return_code < 0) {
+        std::stringstream ss;
+        ss << "Journal failed to seek to end: " << strerror(-return_code) << std::endl;
+        // continue;
+        throw(std::runtime_error(ss.str()));
+    }
     //END only new
 
     //BEGIN since last boot
-    sd_id128_t boot_id;
-    // uint64_t monotonic_timestamp;
-    return_code = sd_id128_get_boot(&boot_id);
-    if (return_code < 0 )
-    {
-        std::stringstream ss;
-        ss << "Journal failed to get boot id: " << strerror(-return_code) << std::endl;
-        throw(std::runtime_error(ss.str()));
-    }
-
-    return_code = sd_journal_seek_monotonic_usec(j, boot_id, 0);
-    if (return_code < 0 )
-    {
-        std::stringstream ss;
-        ss << "SDJ FAIL: sd_journal_seek_monotonic_usec: " << strerror(-return_code) << std::endl;
-        throw(std::runtime_error(ss.str()));
-    }
+    // sd_id128_t boot_id;
+    // // uint64_t monotonic_timestamp;
+    // return_code = sd_id128_get_boot(&boot_id);
+    // if (return_code < 0 )
+    // {
+    //     std::stringstream ss;
+    //     ss << "Journal failed to get boot id: " << strerror(-return_code) << std::endl;
+    //     throw(std::runtime_error(ss.str()));
+    // }
+    //
+    // return_code = sd_journal_seek_monotonic_usec(j, boot_id, 0);
+    // if (return_code < 0 )
+    // {
+    //     std::stringstream ss;
+    //     ss << "SDJ FAIL: sd_journal_seek_monotonic_usec: " << strerror(-return_code) << std::endl;
+    //     throw(std::runtime_error(ss.str()));
+    // }
     //END since last boot
 
 
@@ -173,43 +173,43 @@ std::string Logging::SDJ::getData()
     // outputFile << (const char*)d << std::endl;
     // outputFile.close();
 
-    // std::string::size_type found_pos;
-    // found_pos = str.find(field, 0);
-    //
-    // if (found_pos != std::string::npos)
-    // {
-    //
-    //     str = str.substr(field.length());
-    //
-    //     if (strcmp(_priority_level, "PRIORITY=0") == 0)
-    //     {
-    //         str.insert(0, "0");
-    //     }
-    //     else if (strcmp(_priority_level, "PRIORITY=1") == 0)
-    //     {
-    //         str.insert(0, "1");
-    //     }
-    //     else if (strcmp(_priority_level, "PRIORITY=2") == 0)
-    //     {
-    //         str.insert(0, "2");
-    //     }
-    //     else if (strcmp(_priority_level, "PRIORITY=3") == 0)
-    //     {
-    //         str.insert(0, "3");
-    //     }
-    //     else if (strcmp(_priority_level, "PRIORITY=4") == 0)
-    //     {
-    //         str.insert(0, "4");
-    //     }
-    //     else throw("Programming error: NO STRINGS MATCH.");;
-    //
-    //
-    // } else
-    // {
-    //     std::stringstream ss;
-    //     ss << field << " not found: " << std::endl;
-    //     throw(std::runtime_error(ss.str()));
-    // }
+    std::string::size_type found_pos;
+    found_pos = str.find(field, 0);
+
+    if (found_pos != std::string::npos)
+    {
+
+        str = str.substr(field.length());
+
+        if (strcmp(_priority_level, "PRIORITY=0") == 0)
+        {
+            str.insert(0, "Emergency");
+        }
+        else if (strcmp(_priority_level, "PRIORITY=1") == 0)
+        {
+            str.insert(0, "Alert");
+        }
+        else if (strcmp(_priority_level, "PRIORITY=2") == 0)
+        {
+            str.insert(0, "Critical");
+        }
+        else if (strcmp(_priority_level, "PRIORITY=3") == 0)
+        {
+            str.insert(0, "Error");
+        }
+        else if (strcmp(_priority_level, "PRIORITY=4") == 0)
+        {
+            str.insert(0, "Warning");
+        }
+        else throw("Programming error: NO STRINGS MATCH.");;
+
+
+    } else
+    {
+        std::stringstream ss;
+        ss << field << " not found: " << std::endl;
+        throw(std::runtime_error(ss.str()));
+    }
 
     return str;
 }

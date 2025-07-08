@@ -11,6 +11,7 @@ set(SRC_LIST
     main.cpp
     logging/manager.cpp
     logging/sdj.cpp
+    logging/writer.cpp
     ui/layout.cpp
     ui/event-handler.cpp
     ui/windows/collection.cpp
