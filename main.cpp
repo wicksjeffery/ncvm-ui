@@ -1,18 +1,22 @@
 // TODO: Do I need to check for memory leak after ctrl-c?
+// TODO: consider using std::logic_error
 
-// #include "logger.hpp"
 #include "ui/layout.hpp"
 #include "ui/event-handler.hpp"
 #include "vm/manager.hpp"
 #include "logging/manager.hpp"
+#include "command-line-args.hpp"
 #include <future>
 #include <fstream>
 #include <thread>
 
-int main(/*int argc, char **argv*/)
+int main(int argc, char* argv[])
 {
     try
     {
+        CommandLineArgs& cl = CommandLineArgs::getInstance();
+        cl.processArgs(argc, argv);
+
         UI::Layout layout;
         // VM::Manager manager;
         Logging::Manager& log_mgr = Logging::Manager::getInstance();
@@ -25,12 +29,6 @@ int main(/*int argc, char **argv*/)
         auto f1 = std::async(&UI::EventHandler::listen, &event_handler, 9);
 
 
-        // std::ofstream f("/tmp/foo", std::fstream::trunc);
-
-        // f << "okpeT: " << std::hex << std::this_thread::get_id() << std::endl;
-        // f.close();
-        // std::cout << "\a";
-
         if (f1.get() == 0)
         {
             //This will be when exit was called from EventHandler. Then close logger.
@@ -39,11 +37,21 @@ int main(/*int argc, char **argv*/)
 
             return 0;
         } else return 1;
-
     }
-    catch (const std::runtime_error& error)
+    catch (const std::logic_error& e)
     {
-        std::cerr << error.what() << std::endl;
+        std::cerr << "Programming error: " << e.what() << std::endl;
+
+        return -1;
+    }
+    catch (const std::runtime_error& e)
+    {
+        std::cerr << "Runtime Error: " << e.what() << std::endl;
+
+        return -1;
+    }
+    catch (const std::exception& e) { // Catch any other std::exception
+        std::cerr << "Caught other std::exception: " << e.what() << std::endl;
 
         return -1;
     }

@@ -38,6 +38,8 @@ namespace Logging
         void runSDJ1();
         void runSDJ1OLD2();
 
+        unsigned short sdj_throttle = 0;
+
         // std::unordered_map<SDJ(const char*), unsigned short> m_sdjs;
         // std::unordered_map<unsigned short, SDJ(const char*)> m_sdjs;
 

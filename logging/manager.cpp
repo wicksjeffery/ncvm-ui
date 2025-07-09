@@ -23,6 +23,8 @@
 // outputFile << "hello" << std::endl;
 // outputFile.close();
 
+//TODO: Think about how many times the string is copied from sd_journal_get_data().
+
 
 Logging::Manager& Logging::Manager::getInstance()
 {
@@ -511,6 +513,29 @@ int Logging::Manager::run(int n = 0)
         for (auto& sdj : sdjs)
         {
             if (sdj.getOperationResult()) goto NEWLOGENTRIESFOUND;
+        }
+
+        /**
+         * @brief Logging output throttle speed
+         *
+         * This is a little feature to improve the feel of the app. Meaning:
+         * The wait time is slow enough so the mouse feels reactive but fast
+         * enough that it can get through the log entries quickly.
+         *
+         * However, after there has been three cycles of no logs flowing,
+         * throttle it down to save on cycles.
+         */
+        if (sdj_throttle != 3)
+        {
+            sdj_throttle++;
+
+            if (sdj_throttle == 3)
+            {
+                for (auto& sdj : sdjs)
+                {
+                    sdj.throttleDown();
+                }
+            }
         }
 
         continue;

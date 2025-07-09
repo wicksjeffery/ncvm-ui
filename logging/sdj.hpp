@@ -13,6 +13,8 @@ namespace Logging
 
         const char* _priority_level;
 
+        unsigned int throttle_speed = 100;
+
     public:
         sd_journal *j;
 
@@ -45,6 +47,8 @@ namespace Logging
         }
 
         std::string getData();
+
+        void throttleDown();
     };
 }
 

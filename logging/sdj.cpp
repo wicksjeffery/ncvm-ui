@@ -6,6 +6,7 @@
 
 #include <errno.h>
 #include <string>
+#include "../../command-line-args.hpp"
 
 Logging::SDJ::SDJ(const char* priority_level)
     :
@@ -31,49 +32,60 @@ Logging::SDJ::SDJ(const char* priority_level)
         throw(std::runtime_error(ss.str()));
     }
 
-    //BEGIN only new
-    return_code = sd_journal_seek_tail(j);
+    CommandLineArgs& cl = CommandLineArgs::getInstance();
 
-    if (return_code < 0)
+    // Allow user to specify how many logs they want to see when the app starts.
+    JE number_of_journal_entries = cl.getStartingJournals();
+
+    if (number_of_journal_entries == All)
     {
-        // fprintf(stderr, "Failed to open journal: %s\n", strerror(-return_code)); //TODO: throw instead.
-        std::stringstream ss;
-        ss << "Journal failed to seek to end: " << strerror(-return_code) << std::endl;
-        // continue;
-        throw(std::runtime_error(ss.str()));
+        return;
     }
+    else if (number_of_journal_entries == New)
+    {
+        //BEGIN only new
+        return_code = sd_journal_seek_tail(j);
 
-    return_code = sd_journal_previous(j); // Move to the last valid entry
-    if (return_code < 0) {
-        std::stringstream ss;
-        ss << "Journal failed to seek to end: " << strerror(-return_code) << std::endl;
-        // continue;
-        throw(std::runtime_error(ss.str()));
+        if (return_code < 0)
+        {
+            //TODO: throw using same pattern as in command-line-args.cpp
+            std::stringstream ss;
+            ss << "Journal failed to seek to end: " << strerror(-return_code) << std::endl;
+            // continue;
+            throw(std::runtime_error(ss.str()));
+        }
+
+        return_code = sd_journal_previous(j); // Move to the last valid entry
+        if (return_code < 0) {
+            std::stringstream ss;
+            ss << "Journal failed to seek to end: " << strerror(-return_code) << std::endl;
+            // continue;
+            throw(std::runtime_error(ss.str()));
+        }
+        //END only new
     }
-    //END only new
+    else if (number_of_journal_entries == Last)
+    {
+        //BEGIN since last boot
+        sd_id128_t boot_id;
+        // uint64_t monotonic_timestamp;
+        return_code = sd_id128_get_boot(&boot_id);
+        if (return_code < 0 )
+        {
+            std::stringstream ss;
+            ss << "Journal failed to get boot id: " << strerror(-return_code) << std::endl;
+            throw(std::runtime_error(ss.str()));
+        }
 
-    //BEGIN since last boot
-    // sd_id128_t boot_id;
-    // // uint64_t monotonic_timestamp;
-    // return_code = sd_id128_get_boot(&boot_id);
-    // if (return_code < 0 )
-    // {
-    //     std::stringstream ss;
-    //     ss << "Journal failed to get boot id: " << strerror(-return_code) << std::endl;
-    //     throw(std::runtime_error(ss.str()));
-    // }
-    //
-    // return_code = sd_journal_seek_monotonic_usec(j, boot_id, 0);
-    // if (return_code < 0 )
-    // {
-    //     std::stringstream ss;
-    //     ss << "SDJ FAIL: sd_journal_seek_monotonic_usec: " << strerror(-return_code) << std::endl;
-    //     throw(std::runtime_error(ss.str()));
-    // }
-    //END since last boot
-
-
-
+        return_code = sd_journal_seek_monotonic_usec(j, boot_id, 0);
+        if (return_code < 0 )
+        {
+            std::stringstream ss;
+            ss << "SDJ FAIL: sd_journal_seek_monotonic_usec: " << strerror(-return_code) << std::endl;
+            throw(std::runtime_error(ss.str()));
+        }
+        //END since last boot
+    }
 }
 
 
@@ -108,18 +120,19 @@ int Logging::SDJ::listen(bool running, std::string data)
             data = "okay pokay";
         }
 
-
-
-
-
         // std::cout << "\a" << std::flush;
         // std::this_thread::sleep_for(std::chrono::seconds(2));
-
-
     }
 
     return 2;
 }
+
+
+void Logging::SDJ::throttleDown()
+{
+    throttle_speed = 10000;
+}
+
 
 
 bool Logging::SDJ::getNext()
@@ -142,7 +155,8 @@ bool Logging::SDJ::getNext()
          * If no new journal entries are found, wait timeout_usec. I
          * don't wait indefinately so I can process all four entries.
          */
-        int r2 = sd_journal_wait(j, (uint64_t) 100000);
+        // int r2 = sd_journal_wait(j, (uint64_t) 1000000);
+        int r2 = sd_journal_wait(j, (uint64_t) throttle_speed);
 
         if (r2 < 0)
         {
@@ -209,10 +223,9 @@ std::string Logging::SDJ::getData()
         {
             str.insert(0, "Warning");
         }
-        else throw("Programming error: NO STRINGS MATCH.");;
-
-
-    } else
+        else throw("Programming error: NO STRINGS MATCH."); //TODO use correct "throw" pattern.
+    }
+    else
     {
         std::stringstream ss;
         ss << field << " not found: " << std::endl;
@@ -221,8 +234,6 @@ std::string Logging::SDJ::getData()
 
     return str;
 }
-
-
 
 
 Logging::SDJ::~SDJ()
