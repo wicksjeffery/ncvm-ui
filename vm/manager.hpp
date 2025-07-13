@@ -6,6 +6,7 @@ namespace VM
 {
     class Manager
     {
+        void getVirtualMachines();
     public:
         Manager();
 

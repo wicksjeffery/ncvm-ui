@@ -1,3 +1,3 @@
-ncvm-interface-tester.qcow2
-tests/ncvm-interface-tester.qcow2
 build
+tests/ISO/ncvm-ui-tester.qcow2
+tests/ISO/tinycorelinux-a.iso

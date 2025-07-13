@@ -47,7 +47,7 @@ namespace UI::Windows
         std::pair<std::string, Windows::Rectangle*> findWindow(int y, int x)
         {
             // printAll();
-            std::ofstream outputFile("/tmp/debug1.txt");
+            // std::ofstream outputFile("/tmp/debug1.txt");
 
             // std::vector clickable_items;
 
@@ -62,12 +62,12 @@ namespace UI::Windows
                         continue;
                     }
                     // Return only if OptionsWindow is hidden or not.
-                    outputFile << "key: " << pair.first << std::endl;
+                    // outputFile << "key: " << pair.first << std::endl;
                     return pair;
                 }
 
             }
-            outputFile.close();
+            // outputFile.close();
             return std::make_pair("", nullptr);
         }
 

@@ -1,5 +1,6 @@
 // TODO: Do I need to check for memory leak after ctrl-c?
 // TODO: consider using std::logic_error
+// NOTE: users need permissions to work with libvirt: sudo usermod -a -G libvirt <username>
 
 #include "ui/layout.hpp"
 #include "ui/event-handler.hpp"
@@ -18,7 +19,7 @@ int main(int argc, char* argv[])
         cl.processArgs(argc, argv);
 
         UI::Layout layout;
-        // VM::Manager manager;
+        VM::Manager vmm;
         Logging::Manager& log_mgr = Logging::Manager::getInstance();
 
         std::thread logger_thread(&Logging::Manager::run, &log_mgr, 9);

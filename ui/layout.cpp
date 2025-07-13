@@ -193,9 +193,9 @@ UI::Layout::Layout()
 
 void UI::Layout::save(Windows::Rectangle* w)
 {
-    std::ofstream outputFile;
+    // std::ofstream outputFile;
     // if (dont_save == true) return; // Don't save windows that aren't selectable.
-    outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
+    // outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
 
     // BEGIN extra code to shorten lines of code in window instantiation (in UI::Layout::Layout().
     int status = -1; // Status of the demangling operation
@@ -234,7 +234,7 @@ void UI::Layout::save(Windows::Rectangle* w)
     }
     // BEGIN extra code to shorten lines of code in window instantiation.
 
-    outputFile << child_class_name << std::endl;
+    // outputFile << child_class_name << std::endl;
     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
     // logger1.logMessage("First message from logger1.");
     collection.insert(child_class_name, w);
@@ -249,7 +249,7 @@ void UI::Layout::save(Windows::Rectangle* w)
 //     }
 
 
-    outputFile.close();
+    // outputFile.close();
 
     // collection.printAll();
 }

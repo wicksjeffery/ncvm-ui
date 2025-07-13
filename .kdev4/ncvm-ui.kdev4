@@ -16,7 +16,7 @@ Install Directory=/usr/local
 Runtime=Host System
 
 [Launch]
-Launch Configurations=Launch Configuration 0,Launch Configuration 1
+Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2
 
 [Launch][Launch Configuration 0]
 Configured Launch Modes=execute
@@ -55,6 +55,25 @@ Project Target=ncvm-ui,ncvm-ui
 Use External Terminal=false
 Working Directory=
 isExecutable=false
+
+[Launch][Launch Configuration 2]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=ncvm-ui test
+Type=Native Application
+
+[Launch][Launch Configuration 2][Data]
+Arguments=-t
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x0e\x00n\x00c\x00v\x00m\x00-\x00u\x00i\x00\x00\x00\x0e\x00n\x00c\x00v\x00m\x00-\x00u\x00i)
+Dependency Action=Build
+EnvironmentGroup=
+Executable=file:///home/jwicks/Software/ncvm-ui/tests/emulate-target.sh
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Kill Before Executing Again=4194304
+Project Target=ncvm-ui,ncvm-ui
+Use External Terminal=false
+Working Directory=file:///home/jwicks/Software/ncvm-ui/tests/
+isExecutable=true
 
 [Project]
 VersionControlSupport=kdevgit
