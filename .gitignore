@@ -1,3 +1,6 @@
 build
 tests/ISO/ncvm-ui-tester.qcow2
 tests/ISO/tinycorelinux-a.iso
+tests/ISO/CorePlus-current.iso
+tests/ISO/TinyCore*
+tests/ncvm-debugging.run

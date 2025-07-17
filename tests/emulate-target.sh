@@ -60,6 +60,7 @@ startNCVM() {
 	ssh -p 2222 localhost killall -q ncvm-ui
 	ssh -p 2222 localhost rm -f bin/ncvm-ui
 	scp -P 2222 ncvm-ui localhost:/home/jwicks/bin/
+	scp -P 2222 create-vm.sh localhost:/home/jwicks
 	# Kill ncvm on remote and allow autologin and .bash_pofile to start the new one.
 	p=$(ssh -p 2222 localhost ps -A | grep tty1 | cut -d \t -f 1)
 	ssh -p 2222 localhost kill -9 "$p"

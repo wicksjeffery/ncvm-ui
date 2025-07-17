@@ -7,6 +7,8 @@ namespace VM
     class Manager
     {
         void getVirtualMachines();
+
+        void writeConfFile();
     public:
         Manager();
 

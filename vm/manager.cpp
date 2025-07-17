@@ -50,9 +50,19 @@ void VM::Manager::getVirtualMachines()
     if (num_domains < 0)
         printf("error()");
 
+    if (num_domains == 0)
+    {
+        std::stringstream ss;
+        ss << "No virtual machines found. Create them first.\n";
+
+        throw(std::runtime_error(ss.str()));
+    }
+
     std::ofstream outputFile;
     // outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
     outputFile.open("/tmp/debug.txt");
+
+    outputFile << "got ya: " << std::endl;
 
     for (i = 0; i < num_domains; i++)
     {
@@ -62,7 +72,7 @@ void VM::Manager::getVirtualMachines()
 
         // printf("Domain Name: %s, ID: %d, Active: %d, State: %s, Reason: %s\n", domain_name, domain_id, active, state, reason);
 
-        outputFile << domain_name << std::endl;
+         outputFile << domain_name << std::endl;
     }
 
     outputFile.close();

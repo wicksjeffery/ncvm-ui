@@ -18,8 +18,11 @@ int main(int argc, char* argv[])
         CommandLineArgs& cl = CommandLineArgs::getInstance();
         cl.processArgs(argc, argv);
 
-        UI::Layout layout;
         VM::Manager vmm;
+        //UI::Layout layout(vmm.notify());
+        UI::Layout layout;
+
+
         Logging::Manager& log_mgr = Logging::Manager::getInstance();
 
         std::thread logger_thread(&Logging::Manager::run, &log_mgr, 9);
