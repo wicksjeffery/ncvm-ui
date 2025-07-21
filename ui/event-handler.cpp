@@ -1,6 +1,7 @@
 #include "event-handler.hpp"
 #include <iostream>
 #include "windows/collection.hpp"
+#include "../vm/manager.hpp"
 #include <curses.h>
 #include <fstream>
 #include <thread>
@@ -49,6 +50,8 @@ void UI::EventHandler::toggleOptionsSelector(bool options_selector_was_clicked =
 
 int UI::EventHandler::listen(int n)
 {
+    VM::Manager vmm;
+
     // std::ofstream f("/tmp/foo1", std::fstream::trunc);
     //
     // f << "okpeT: " << std::hex << std::this_thread::get_id() << std::endl;
@@ -67,12 +70,14 @@ int UI::EventHandler::listen(int n)
             {
                 /*
                  * NOTE: GPM selection workaround:
-                 *return 0; The left mouse button leaves selections highlighted,
-                 * but sending a key clears the selection.
+                 * The left mouse button leaves selections highlighted.
                  */
 
                 std::cout << std::endl;
-                refresh();
+                std::cout << '\a' << std::flush;
+                clearok(stdscr, TRUE);
+                update_panels();
+                doupdate();
             }
 
             if (mouse_event.bstate & BUTTON2_PRESSED)

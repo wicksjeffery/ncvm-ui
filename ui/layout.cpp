@@ -16,6 +16,7 @@
 #include "windows/journal/inside.hpp"
 #include "windows/status/outter-frame.hpp"
 #include "windows/status/inside.hpp"
+#include "windows/application-status/box.hpp"
 
 #include "../logging/manager.hpp"
 
@@ -54,6 +55,12 @@ UI::Layout::Layout()
     init_pair(10, COLOR_YELLOW, COLOR_WHITE);
     //END colors for logger
 
+    // init_pair(11, COLOR_YELLOW, COLOR_YELLOW);
+
+    init_pair(11, COLOR_BLACK, COLOR_CYAN);
+    init_pair(12, COLOR_GREEN, COLOR_GREEN);
+    // init_pair(11, COLOR_YELLOW, COLOR_MAGENTA);
+    // init_pair(11, COLOR_YELLOW, COLOR_WHITE);
 
 
     using namespace Windows;
@@ -125,7 +132,7 @@ UI::Layout::Layout()
     // outputFile.close();
 
     save(new Background(LINES, COLS, 0, 0));
-    save(new VMControl::VMOutterFrame(8, COLS-4, 2, 2));
+    save(new VMControl::VMOutterFrame(10, COLS-4, 2, 2));
     save(new VMControl::One(first_vm_start_x));
     save(new VMControl::Two(second_vm_start_x));
     save(new VMControl::Three(third_vm_start_x));
@@ -135,10 +142,12 @@ UI::Layout::Layout()
     save(new OptionsWindow(14, 15, 1, 0));
     save(new MenuItems::Exit(1, 12, 10, 1));
     save(new MenuItems::About(1, 12, 12, 1));
-    save(new Journal::OutterFrame(LINES-20, COLS-4, 11, 2));
-    save(new Journal::Inside(LINES-23, COLS-11, 12, 5));
-    save(new Status::OutterFrame(7, COLS-4, LINES-8, 2));
-    save(new Status::Inside(4, COLS-11, LINES-7, 5)); //TODO leave the namespace for clarity.
+    save(new Journal::OutterFrame(LINES-15, COLS-4, 13, 2));
+    save(new Journal::Inside(LINES-18, COLS-11, 14, 5));
+    // save(new Status::OutterFrame(6, COLS-4, LINES-8, 2));
+    // save(new Status::Inside(3, COLS-11, LINES-7, 5)); //TODO leave the namespace for clarity.
+    save(new ApplicationStatus::Box(1, COLS, LINES-1, 0));
+
 
 
     // UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();

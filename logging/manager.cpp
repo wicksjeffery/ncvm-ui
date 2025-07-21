@@ -16,6 +16,7 @@
 #include <array>
 #include <unordered_map>
 #include "writer.hpp"
+#include <syslog.h>
 
 //ALERT System Logs go to "system log window" and application logs go to "application log window as well as systemd-logger"
 // std::ofstream outputFile;
@@ -35,32 +36,42 @@ Logging::Manager& Logging::Manager::getInstance()
 
 Logging::Manager::Manager()
 {
-    write("Initializing...");
+    //TODO:
+    // write("Initializing...");
 }
 
-void Logging::Manager::write(std::string entry)
+void Logging::Manager::write(unsigned short level, const char* entry)
 {
-    auto now = std::chrono::time_point_cast<std::chrono::seconds>(
-        std::chrono::system_clock::now()
-    );
-    auto timestamp = std::format("{:%Y-%m-%d %H:%M:%S}", now);
-
-    std::ofstream ofs;
-    ofs.open("ncvm.log", std::ofstream::app);
-    ofs << timestamp << "\t" << entry << std::endl;
-
-
+//     // auto now = std::chrono::time_point_cast<std::chrono::seconds>(
+//     //     std::chrono::system_clock::now()
+//     // );
+//     // auto timestamp = std::format("{:%Y-%m-%d %H:%M:%S}", now);
+//     //
+//     // std::ofstream ofs;
+//     // ofs.open("ncvm.log", std::ofstream::app);
+//     // ofs << timestamp << "\t" << entry << std::endl;
+//     //
+//     //
+    //TODO possible to change colors according to log level severity here.
     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-
-    wprintw(collection.find("UI::Windows::Status::Inside")->get_window(), "\n%s", entry.c_str());
-    // wrefresh(collection.find("Inside")->get_window());
-
-    ofs.close();
+    wprintw(collection.find("UI::Windows::ApplicationStatus::Box")->get_window(), "%s", entry);
+    wrefresh(collection.find("UI::Windows::ApplicationStatus::Box")->get_window());
+//     //
+//     // ofs.close();
+//
+//
+//
+    openlog("ncvm-ui", LOG_PID, LOG_DAEMON); // Open log with program name, PID, and daemon facility
+    // syslog(LOG_NOTICE, "This is a notice message sent via syslog.");
+    syslog(level, "%s", entry);
+    //TODO use syslog log levels instead of my own enum.
+    // syslog(LOG_WARNING, entry.c_str());
+    closelog();
 }
 
 
 
-int Logging::Manager::run(int n = 0)
+int Logging::Manager::display_tail(int n = 0)
 {
     //TODO consider setting priority levels from cmdline options.
     std::array<SDJ, 5> sdjs =
@@ -147,5 +158,6 @@ int Logging::Manager::run(int n = 0)
 
 Logging::Manager::~Manager()
 {
-    write("Stopping...");
+    //TODO:
+    // write("Stopping...");
 }

@@ -27,6 +27,7 @@ void UI::Windows::Collection::printAll() const
 
     for (auto const& [key, val] : m_windows)
     {
-        logger.write(key);
+        //TODO:
+        // logger.write(key);
     }
 }

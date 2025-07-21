@@ -38,6 +38,7 @@ set(SRC_LIST
     ui/windows/journal/inside.cpp
     ui/windows/status/outter-frame.cpp
     ui/windows/status/inside.cpp
+    ui/windows/application-status/box.cpp
     vm/collection.cpp
     vm/manager.cpp)
 

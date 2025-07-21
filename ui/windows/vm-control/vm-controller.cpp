@@ -2,39 +2,43 @@
 
 #include <iostream>
 #include "ncurses.h"
+#include <cstring>
 
 UI::Windows::VMControl::VMContoller::VMContoller(int begin_x)
     :
-        Rectangle(5, 17, 3, begin_x)
+        Rectangle(7, 17, 3, begin_x)
 {
-    wbkgd(m_window, COLOR_PAIR(4));
+    wbkgd(m_window, COLOR_PAIR(5));
+    // wbkgd(m_window, COLOR_PAIR(11));
 
     wattron(m_window, COLOR_PAIR(3));
     box(m_window ,0, 0);
     wattroff(m_window, COLOR_PAIR(3));
 
-    // // BEGIN: give the box a "shadow"
-    // wattron(m_window, COLOR_PAIR(4));
-    // mvwvline(m_window, 1, width-1, ' ', height-2);
-    // mvwhline(m_window, height-1, 1, ' ', width-1);
-    // wattroff(m_window, COLOR_PAIR(4));
-    // // END: give the box a "shadow"
-    //
-    // // BEGIN: Inside box
-    // wattron(m_window, COLOR_PAIR(2) | A_BOLD);
-    // mvwaddch(m_window, 0, 1, ACS_ULCORNER); // Top-Left corner
-    // mvwhline(m_window, 0, 2, ACS_HLINE, width-4); // Top horizontal
-    // mvwaddch(m_window, 0, width-3, ACS_URCORNER); // Top-right corner
-    // mvwvline(m_window, 1, width-3, ACS_VLINE, height-3); // Right vertical
-    // mvwaddch(m_window, height-2, width-3, ACS_LRCORNER); // Lower-right corner
-    // mvwhline(m_window, height-2, 2, ACS_HLINE, width-5);
-    // mvwaddch(m_window, height-2, 1, ACS_LLCORNER); // Lower-Left corner
-    // mvwvline(m_window, 1, 1, ACS_VLINE, height-3);
-    // wattroff(m_window, COLOR_PAIR(2) | A_BOLD);
-    // // END: Inside box
-    //
-    // // Hardcode top right and bottom left characters to
-    // // give a transparent look.
-    // mvwaddch(m_window, 0, width-1, ' ' | COLOR_PAIR(1));
-    // mvwaddch(m_window, height-1, 0, ' ' | COLOR_PAIR(1));
+
+
+    int max_x = getmaxx(m_window); // Get the maximum column of the window.
+    const char* vm_name_tmp = "Fedora";
+    int text_len = strlen(vm_name_tmp); // Get the length of the text.
+    int start_col = (max_x - text_len) / 2; // Calculate the starting column.
+
+    mvwprintw(m_window, 2, start_col, "%s", vm_name_tmp, COLOR_PAIR(3));
+
+    wattron(m_window, COLOR_PAIR(2));
+
+    mvwhline(m_window, 5, 1, ACS_BLOCK, max_x-2);
+
+    wattroff(m_window, COLOR_PAIR(2));
+    wattron(m_window, COLOR_PAIR(3));
+
+    mvwaddch(m_window, 4, 0, ACS_LTEE);
+    mvwhline(m_window, 4, 1, ACS_HLINE, max_x-2);
+    mvwaddch(m_window, 4, max_x-1, ACS_RTEE);
+    wattroff(m_window, COLOR_PAIR(3));
+    wattron(m_window, COLOR_PAIR(3) | A_BOLD);
+
+    mvwaddch(m_window, 5, 1, ACS_RARROW);
+    mvwprintw(m_window, 5, 2, "%s", " sb: unknown"); //TODO: make 8max chars on left and : 8max chars on right
+    wattroff(m_window, COLOR_PAIR(3) | A_BOLD);
+
 }

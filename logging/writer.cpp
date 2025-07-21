@@ -65,7 +65,7 @@ void Logging::Writer::write()
     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
 
     wattron(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(color) | A_BOLD);
-    wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "%s\n", _log_entry.c_str());
+    wprintw(collection.find("UI::Windows::Journal::Inside")->get_window(), "\n%s", _log_entry.c_str());
     wattroff(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(color) | A_BOLD);
     wrefresh(collection.find("UI::Windows::Journal::Inside")->get_window());
 }

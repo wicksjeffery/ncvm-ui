@@ -26,9 +26,9 @@ namespace Logging
     public:
         static Manager& getInstance();
 
-        void write(std::string);
+        void write(unsigned short, const char*);
 
-        int run(int);
+        int display_tail(int);
 
         void quit() { running = false; }
     };

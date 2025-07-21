@@ -4,11 +4,12 @@
 #include <fstream>
 #include <filesystem>
 #include <array>
-
+#include "../logging/manager.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include <libvirt/libvirt.h>
 #include <error.h>
+#include <syslog.h>
 
 VM::Manager::Manager()
 {
@@ -17,6 +18,12 @@ VM::Manager::Manager()
         //TODO send msg to looger to write to systemd journal and ui:
         // no configuration file found. Writing default one...
         // instructions for using config file on about page and github.
+
+
+        Logging::Manager& log_mgr = Logging::Manager::getInstance();
+
+        log_mgr.write(LOG_ALERT, "Creating default ncvm-ui.conf. Please see \"About\".");
+
 
         getVirtualMachines();
     }
@@ -58,11 +65,17 @@ void VM::Manager::getVirtualMachines()
         throw(std::runtime_error(ss.str()));
     }
 
-    std::ofstream outputFile;
-    // outputFile.open("/tmp/debug.txt", std::ofstream::out | std::ofstream::app);
-    outputFile.open("/tmp/debug.txt");
+    std::ofstream file;
+    file.open("ncvm-ui.conf");
 
-    outputFile << "got ya: " << std::endl;
+    std::string ncvm_ui_conf =
+R"(#This is the ncvm-ui configuration file
+#
+#[vm1]
+#vm2      # vm1 won't run if vm2 is mentioned here.
+)";
+
+    file << ncvm_ui_conf << std::endl;
 
     for (i = 0; i < num_domains; i++)
     {
@@ -72,10 +85,11 @@ void VM::Manager::getVirtualMachines()
 
         // printf("Domain Name: %s, ID: %d, Active: %d, State: %s, Reason: %s\n", domain_name, domain_id, active, state, reason);
 
-         outputFile << domain_name << std::endl;
+         file << '[' << domain_name << ']' << std::endl;
     }
 
-    outputFile.close();
+    file << std::endl;
+    file.close();
 
 
     // Free allocated memory and close the connection

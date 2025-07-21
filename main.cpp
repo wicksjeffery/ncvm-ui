@@ -18,14 +18,19 @@ int main(int argc, char* argv[])
         CommandLineArgs& cl = CommandLineArgs::getInstance();
         cl.processArgs(argc, argv);
 
-        VM::Manager vmm;
+
         //UI::Layout layout(vmm.notify());
         UI::Layout layout;
 
 
         Logging::Manager& log_mgr = Logging::Manager::getInstance();
 
-        std::thread logger_thread(&Logging::Manager::run, &log_mgr, 9);
+
+
+        //TODO: remove this thread and put display_tail in UI::EventHandler::listen()
+        std::thread logger_thread(&Logging::Manager::display_tail, &log_mgr, 9);
+
+        // VM::Manager vmm;
 
         UI::EventHandler event_handler;
 
