@@ -57,6 +57,7 @@ namespace UI::Windows
                 {
                     if (pair.first == "UI::Windows::Background" ||
                         pair.first == "UI::Windows::OptionsWindow" ||
+                        pair.first == "UI::Windows::VMControl::VMOutterFrame" ||
                         pair.first == "UI::Windows::Information")
                     {
                         continue;

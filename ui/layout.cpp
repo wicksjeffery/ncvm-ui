@@ -39,6 +39,8 @@ UI::Layout::Layout()
     scrollok(stdscr, false);
     clearok(stdscr, false);
     keypad(stdscr, TRUE);
+    // nodelay(stdscr, TRUE);
+    // timeout(0);
     mousemask(BUTTON1_RELEASED | BUTTON2_PRESSED, NULL);
 
     start_color();

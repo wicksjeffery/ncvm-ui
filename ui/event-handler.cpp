@@ -50,7 +50,7 @@ void UI::EventHandler::toggleOptionsSelector(bool options_selector_was_clicked =
 
 int UI::EventHandler::listen(int n)
 {
-    VM::Manager vmm;
+    // VM::Manager vmm;
 
     // std::ofstream f("/tmp/foo1", std::fstream::trunc);
     //
@@ -62,6 +62,8 @@ int UI::EventHandler::listen(int n)
 
     while (exit_program == false)
     {
+        // vmm.monitorStates();
+
         int getch_return_value = getch();
 
         if (getch_return_value == KEY_MOUSE && getmouse(&mouse_event) == OK)
@@ -95,11 +97,11 @@ int UI::EventHandler::listen(int n)
                     // refresh(); // Clears mouse-paste that can happen from the middle button - screws up the screen.
                     //
                     //     // redrawwin();
-                    // wattron(collection.find("UI::Windows::Status::Inside")->get_window(), COLOR_PAIR(3));
-                    // mvwprintw(collection.find("UI::Windows::Status::Inside")->get_window(), 1, 1, "You clicked:                       ");
-                    // mvwprintw(collection.find("UI::Windows::Status::Inside")->get_window(), 1, 1, "You clicked: %s", pair.first.c_str());
-                    // wrefresh(collection.find("UI::Windows::Status::Inside")->get_window());
-                    // wattroff(collection.find("UI::Windows::Status::Inside")->get_window(), COLOR_PAIR(3));
+                    // wattron(collection.find("ApplicationStatus::Box")->get_window(), COLOR_PAIR(3));
+                    // // wprintw(collection.find("ApplicationStatus::Box")->get_window(), "You clicked:                       ");
+                    mvwprintw(collection.find("UI::Windows::VMControl::One")->get_window(), 0, 0, "%s", pair.first.c_str());
+                    // wrefresh(collection.find("ApplicationStatus::Box")->get_window());
+                    // wattroff(collection.find("ApplicationStatus::Box")->get_window(), COLOR_PAIR(3));
 
                     if (pair.first == "UI::Windows::VMControl::One")
                     {
@@ -128,7 +130,8 @@ int UI::EventHandler::listen(int n)
                     {
                         // wattron(collection.find("Background")->get_window(), COLOR_PAIR(3));
                         // mvwprintw(collection.find("Background")->get_window(), 16, 25, "You clicked:                       ");
-                        // mvwprintw(collection.find("Background")->get_window(), 16, 25, "You clicked: %s", pair.first.c_str());
+                        // mvwprintw(collection.find("Background")->get_window(), LINES-1, 0, "You clicked: %s", pair.first.c_str());
+                        // wrefresh(collection.find("UI::Windows::Status::Inside")->get_window());
                         // wattroff(collection.find("Background")->get_window(), COLOR_PAIR(3));
 
                         if (!panel_hidden(collection.find("UI::Windows::MenuItems::Exit")->get_panel()))

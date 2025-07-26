@@ -28,8 +28,8 @@ namespace Logging
 
         enum COLORS
         {
-            Emergency = 7,
-            Alert = 8,
+            Emergency = 8,
+            Alert = 7,
             Critical = 9,
             Error = 10,
             Warning = 2

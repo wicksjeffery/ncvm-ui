@@ -15,11 +15,13 @@ int main(int argc, char* argv[])
 {
     try
     {
+        // VM::Manager vmm1;
+        // return 0;
+
         CommandLineArgs& cl = CommandLineArgs::getInstance();
         cl.processArgs(argc, argv);
 
 
-        //UI::Layout layout(vmm.notify());
         UI::Layout layout;
 
 
@@ -30,17 +32,19 @@ int main(int argc, char* argv[])
         //TODO: remove this thread and put display_tail in UI::EventHandler::listen()
         std::thread logger_thread(&Logging::Manager::display_tail, &log_mgr, 9);
 
-        // VM::Manager vmm;
+        VM::Manager vmm;
+        std::thread vmm_thread(&VM::Manager::monitorStates, &vmm, 9);
 
         UI::EventHandler event_handler;
-
-
         auto f1 = std::async(&UI::EventHandler::listen, &event_handler, 9);
 
 
         if (f1.get() == 0)
         {
-            //This will be when exit was called from EventHandler. Then close logger.
+            //This will be when exit was called from EventHandler.
+            vmm.quit();
+            vmm_thread.join();
+
             log_mgr.quit();
             logger_thread.join();
 
