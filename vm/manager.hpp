@@ -14,8 +14,8 @@ namespace VM
 
     struct VMState
     {
-        // const char* name;
-        std::string name;
+        const char* name;
+        // std::string name;
         int state;
         int reason;
         //TODO cast state and reason to their defines when I use them.
@@ -59,10 +59,16 @@ namespace VM
 
         void validateConfigFile();
 
-        void updateVMwindows();
-
         const char* getInitialState(int);
-        const char* lifycycleEventToString(VMState*);
+
+        //BEGIN TODO combign these two functions
+        void updateVMwindows(VMState);
+        const char* lifycycleEventToString(VMState);
+        //END TODO combign these two functions
+
+        const char* initialStateToString(int)
+
+        // VMState _vmstate;
 
     public:
         Manager();

@@ -52,7 +52,7 @@ namespace
                                virDomainPtr dom,
                                int eventID,
                                int detail,
-                               VM::VMState *opaque)
+                               void* opaque)
     {
         tmp_vmstate = new VM::VMState;
 
@@ -338,7 +338,37 @@ const char* VM::Manager::getInitialState(int state)
     }
 }
 
-const char * VM::Manager::lifycycleEventToString(VMState* v)
+const char* initialStateToString(int s)
+{
+    switch (s)
+    {
+        case VIR_DOMAIN_EVENT_DEFINED:
+            return " defined: ";
+        case VIR_DOMAIN_EVENT_UNDEFINED:
+            return " undefined: ";
+        case VIR_DOMAIN_EVENT_STARTED:
+            return " started: ";
+        case VIR_DOMAIN_EVENT_SUSPENDED:
+            return " suspended: ";
+        case VIR_DOMAIN_EVENT_RESUMED:
+            return " resumed: ";
+        case VIR_DOMAIN_EVENT_STOPPED:
+            return " stopped: ";
+        case VIR_DOMAIN_EVENT_SHUTDOWN:
+            return " shutdown: ";
+        case VIR_DOMAIN_EVENT_PMSUSPENDED:
+            return " pm_suspended: ";
+        case VIR_DOMAIN_EVENT_CRASHED:
+            return " crashed: ";
+        default:
+            return " error: ";
+            break;
+    }
+}
+
+
+// TODO MERGE THIS FUNCTION INTO updateVMwindows()
+const char * VM::Manager::lifycycleEventToString(VMState v)
 {
     unsigned vm_number = 0;
     std::string event_state;
@@ -347,44 +377,46 @@ const char * VM::Manager::lifycycleEventToString(VMState* v)
         vm_number++;
         // Do something if the event was generated from one of the machines,
         // we're watching.
-        if (v->name == vm.name)
+        if (v.name == vm.name)
         {
-            vm.state = v->state; //TODO do I only care to save the machine name?
-            vm.reason = v->reason; //Maybe not neccessary to save state and reason past this function.
+            vm.state = v.state; //TODO do I only care to save the machine name?
+            vm.reason = v.reason; //Maybe not neccessary to save state and reason past this function.
 
-            switch (v->state)
-            {
-                case VIR_DOMAIN_EVENT_DEFINED:
-                    event_state = " defined: ";
-                    break;
-                case VIR_DOMAIN_EVENT_UNDEFINED:
-                    event_state = " undefined: ";
-                    break;
-                case VIR_DOMAIN_EVENT_STARTED:
-                    event_state = " started: ";
-                    break;
-                case VIR_DOMAIN_EVENT_SUSPENDED:
-                    event_state = " suspended: ";
-                    break;
-                case VIR_DOMAIN_EVENT_RESUMED:
-                    event_state = " resumed: ";
-                    break;
-                case VIR_DOMAIN_EVENT_STOPPED:
-                    event_state = " stopped: ";
-                    break;
-                case VIR_DOMAIN_EVENT_SHUTDOWN:
-                    event_state = " shutdown: ";
-                    break;
-                case VIR_DOMAIN_EVENT_PMSUSPENDED:
-                    event_state = " pm_suspended: ";
-                    break;
-                case VIR_DOMAIN_EVENT_CRASHED:
-                    event_state = " crashed: ";
-                    break;
-                default:
-                    event_state = " error: ";
-                    break;
-            }
+            event_state = initialStateToString(v.state);
+
+            // switch (v.state)
+            // {
+            //     case VIR_DOMAIN_EVENT_DEFINED:
+            //         event_state = " defined: ";
+            //         break;
+            //     case VIR_DOMAIN_EVENT_UNDEFINED:
+            //         event_state = " undefined: ";
+            //         break;
+            //     case VIR_DOMAIN_EVENT_STARTED:
+            //         event_state = " started: ";
+            //         break;
+            //     case VIR_DOMAIN_EVENT_SUSPENDED:
+            //         event_state = " suspended: ";
+            //         break;
+            //     case VIR_DOMAIN_EVENT_RESUMED:
+            //         event_state = " resumed: ";
+            //         break;
+            //     case VIR_DOMAIN_EVENT_STOPPED:
+            //         event_state = " stopped: ";
+            //         break;
+            //     case VIR_DOMAIN_EVENT_SHUTDOWN:
+            //         event_state = " shutdown: ";
+            //         break;
+            //     case VIR_DOMAIN_EVENT_PMSUSPENDED:
+            //         event_state = " pm_suspended: ";
+            //         break;
+            //     case VIR_DOMAIN_EVENT_CRASHED:
+            //         event_state = " crashed: ";
+            //         break;
+            //     default:
+            //         event_state = " error: ";
+            //         break;
+            // }
 
             event_state.append(std::to_string(v->reason));
 
@@ -480,99 +512,217 @@ const char * VM::Manager::lifycycleEventToString(VMState* v)
 
 
 #include <ncurses.h>
-void VM::Manager::updateVMwindows()
+// void VM::Manager::updateVMwindows()
+// {
+//     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
+//
+//     //TODO compare to all other vms to see if truncating will result in identical names. Then adjust.
+//     std::string truncated_vm_name;
+//
+//     int max_x = getmaxx(collection.find("UI::Windows::VMControl::One")->get_window()); // Get the maximum column of the window.
+//     // const char* vm_name_tmp = "Fedora";
+//     // int text_len = strlen(vm_name_tmp); // Get the length of the text.
+//     // int start_col = (max_x - text_len) / 2; // Calculate the starting column.
+//
+//     int start_col;
+//
+//
+//     switch (vms.size()) //TODO put this in a for loop so machine names are not in reverse order
+//     {
+//         case 4:
+//             truncated_vm_name = vms[3].name;
+//             if (truncated_vm_name.length() > max_x-5)
+//             {
+//                 truncated_vm_name.resize(12);
+//                 truncated_vm_name.append("~");
+//             }
+//
+//             start_col = (max_x - truncated_vm_name.length()) / 2;
+//
+//             mvwprintw(collection.find("UI::Windows::VMControl::Four")->get_window(), 2, start_col, "%s", truncated_vm_name.c_str());
+//             wrefresh(collection.find("UI::Windows::VMControl::Four")->get_window());
+//             // break;
+//         case 3:
+//             truncated_vm_name = vms[2].name;
+//             if (truncated_vm_name.length() > max_x-5)
+//             {
+//                 truncated_vm_name.resize(12);
+//                 truncated_vm_name.append("~");
+//             }
+//
+//             start_col = (max_x - truncated_vm_name.length()) / 2;
+//
+//             mvwprintw(collection.find("UI::Windows::VMControl::Three")->get_window(), 2, start_col, "%s", truncated_vm_name.c_str());
+//             wrefresh(collection.find("UI::Windows::VMControl::Three")->get_window());
+//             // break;
+//         case 2:
+//             truncated_vm_name = vms[1].name;
+//             if (truncated_vm_name.length() > max_x-5)
+//             {
+//                 truncated_vm_name.resize(12);
+//                 truncated_vm_name.append("~"); //TODO test this with a long vm name
+//             }
+//
+//             start_col = (max_x - truncated_vm_name.length()) / 2;
+//
+//             mvwprintw(collection.find("UI::Windows::VMControl::Two")->get_window(), 2, start_col, "%s", truncated_vm_name.c_str());
+//             wrefresh(collection.find("UI::Windows::VMControl::Two")->get_window());
+//             // break;
+//         case 1:
+//             truncated_vm_name = vms[0].name;
+//             if (truncated_vm_name.length() > max_x-5)
+//             {
+//                 truncated_vm_name.resize(12);
+//                 truncated_vm_name.append("~"); //TODO test this with a long vm name
+//             }
+//
+//             start_col = (max_x - truncated_vm_name.length()) / 2;
+//
+//             WINDOW* win = collection.find("UI::Windows::VMControl::One")->get_window();
+//
+//
+//             mvwprintw(win, 2, start_col, "%s", truncated_vm_name.c_str());
+//
+//             std::stringstream ss;
+//
+//             // ss << " s" << vms[0].state << ": " << vms[0].reason;
+//             ss << " " << getInitialState(vms[0].state) << ": " << vms[0].reason;
+//
+//             // INFO: in the unknown even that the string is longer than the
+//             // available space, truncate it so it doesn't write out of the
+//             // window.
+//             std::string tmp = ss.str();
+//             if (tmp.length() > max_x-4)
+//             {
+//                 tmp.resize(max_x-4);
+//                 tmp.append("~");
+//             }
+//
+//             wattron(win, COLOR_PAIR(3) | A_BOLD);
+//             mvwhline(win, 5, 1, ' ', max_x-2); //Clear the line.
+//             wmove(win, 5, 1);
+//             waddch(win, ACS_RARROW);
+//             wprintw(win, "%s", tmp.c_str());
+//             wattroff(win, COLOR_PAIR(3) | A_BOLD);
+//             wrefresh(win);
+//     }
+// }
+
+void VM::Manager::updateVMwindows(VMState vs)
 {
     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
 
     //TODO compare to all other vms to see if truncating will result in identical names. Then adjust.
-    std::string truncated_vm_name;
+    // std::string truncated_vm_name;
 
-    int max_x = getmaxx(collection.find("UI::Windows::VMControl::One")->get_window()); // Get the maximum column of the window.
+    // int max_x = getmaxx(collection.find("UI::Windows::VMControl::One")->get_window()); // Get the maximum column of the window.
     // const char* vm_name_tmp = "Fedora";
     // int text_len = strlen(vm_name_tmp); // Get the length of the text.
     // int start_col = (max_x - text_len) / 2; // Calculate the starting column.
 
-    int start_col;
+    // int start_col = (max_x - truncated_vm_name.length()) / 2;
 
-
-    switch (vms.size()) //TODO put this in a for loop so machine names are not in reverse order
+    for (int i = 0; i < vms.size(); i++) //TODO use tmp_vmstate to store...
     {
-        case 4:
-            truncated_vm_name = vms[3].name;
-            if (truncated_vm_name.length() > max_x-5)
+        std::string name = vms[i].name;
+        std::string vm_window_selector;
+
+        switch (i)
+        {
+            case 0:
+                vm_window_selector = "UI::Windows::VMControl::One";
+                break;
+            case 1:
+                vm_window_selector = "UI::Windows::VMControl::Two";
+                break;
+            case 2:
+                vm_window_selector = "UI::Windows::VMControl::Three";
+                break;
+            case 3:
+                vm_window_selector = "UI::Windows::VMControl::Four";
+                break;
+            default: throw("should never get to here.");
+        }
+
+        if (set_initial_state == false)
+        {
+            switch (v->state)
             {
-                truncated_vm_name.resize(12);
-                truncated_vm_name.append("~");
+                case VIR_DOMAIN_EVENT_DEFINED:
+                    event_state = " defined: ";
+                    break;
+                case VIR_DOMAIN_EVENT_UNDEFINED:
+                    event_state = " undefined: ";
+                    break;
+                case VIR_DOMAIN_EVENT_STARTED:
+                    event_state = " started: ";
+                    break;
+                case VIR_DOMAIN_EVENT_SUSPENDED:
+                    event_state = " suspended: ";
+                    break;
+                case VIR_DOMAIN_EVENT_RESUMED:
+                    event_state = " resumed: ";
+                    break;
+                case VIR_DOMAIN_EVENT_STOPPED:
+                    event_state = " stopped: ";
+                    break;
+                case VIR_DOMAIN_EVENT_SHUTDOWN:
+                    event_state = " shutdown: ";
+                    break;
+                case VIR_DOMAIN_EVENT_PMSUSPENDED:
+                    event_state = " pm_suspended: ";
+                    break;
+                case VIR_DOMAIN_EVENT_CRASHED:
+                    event_state = " crashed: ";
+                    break;
+                default:
+                    event_state = " error: ";
+                    break;
             }
-
-            start_col = (max_x - truncated_vm_name.length()) / 2;
-
-            mvwprintw(collection.find("UI::Windows::VMControl::Four")->get_window(), 2, start_col, "%s", truncated_vm_name.c_str());
-            wrefresh(collection.find("UI::Windows::VMControl::Four")->get_window());
-            // break;
-        case 3:
-            truncated_vm_name = vms[2].name;
-            if (truncated_vm_name.length() > max_x-5)
-            {
-                truncated_vm_name.resize(12);
-                truncated_vm_name.append("~");
-            }
-
-            start_col = (max_x - truncated_vm_name.length()) / 2;
-
-            mvwprintw(collection.find("UI::Windows::VMControl::Three")->get_window(), 2, start_col, "%s", truncated_vm_name.c_str());
-            wrefresh(collection.find("UI::Windows::VMControl::Three")->get_window());
-            // break;
-        case 2:
-            truncated_vm_name = vms[1].name;
-            if (truncated_vm_name.length() > max_x-5)
-            {
-                truncated_vm_name.resize(12);
-                truncated_vm_name.append("~"); //TODO test this with a long vm name
-            }
-
-            start_col = (max_x - truncated_vm_name.length()) / 2;
-
-            mvwprintw(collection.find("UI::Windows::VMControl::Two")->get_window(), 2, start_col, "%s", truncated_vm_name.c_str());
-            wrefresh(collection.find("UI::Windows::VMControl::Two")->get_window());
-            // break;
-        case 1:
-            truncated_vm_name = vms[0].name;
-            if (truncated_vm_name.length() > max_x-5)
-            {
-                truncated_vm_name.resize(12);
-                truncated_vm_name.append("~"); //TODO test this with a long vm name
-            }
-
-            start_col = (max_x - truncated_vm_name.length()) / 2;
-
-            WINDOW* win = collection.find("UI::Windows::VMControl::One")->get_window();
+        }
 
 
-            mvwprintw(win, 2, start_col, "%s", truncated_vm_name.c_str());
 
-            std::stringstream ss;
 
-            // ss << " s" << vms[0].state << ": " << vms[0].reason;
-            ss << " " << getInitialState(vms[0].state) << ": " << vms[0].reason;
 
-            // INFO: in the unknown even that the string is longer than the
-            // available space, truncate it so it doesn't write out of the
-            // window.
-            std::string tmp = ss.str();
-            if (tmp.length() > max_x-4)
-            {
-                tmp.resize(max_x-4);
-                tmp.append("~");
-            }
+        WINDOW* win = collection.find(vm_window_selector)->get_window();
+        int max_x = getmaxx(win);
 
-            wattron(win, COLOR_PAIR(3) | A_BOLD);
-            mvwhline(win, 5, 1, ' ', max_x-2); //Clear the line.
-            wmove(win, 5, 1);
-            waddch(win, ACS_RARROW);
-            wprintw(win, "%s", tmp.c_str());
-            wattroff(win, COLOR_PAIR(3) | A_BOLD);
-            wrefresh(win);
+        name = vms[i].name;
+        if (name.length() > max_x-5)
+        {
+            name.resize(12);
+            name.append("~"); //TODO test this with a long vm name
+        }
+
+        int start_col = (max_x - name.length()) / 2;
+
+        mvwprintw(win, 2, start_col, "%s", name.c_str());
+        // mvwprintw(collection.find("UI::Windows::VMControl::Three")->get_window(), 2, start_col, "%s", name.c_str());
+        // wrefresh(win);
+
+        std::stringstream ss;
+
+        // ss << " s" << vms[0].state << ": " << vms[0].reason;
+        ss << " " << getInitialState(vms[i].state) << ": " << vms[i].reason;
+
+        // INFO: in the unknown even that the string is longer than the
+        // available space, truncate it so it doesn't write out of the
+        // window.
+        std::string tmp = ss.str();
+        if (tmp.length() > max_x-4)
+        {
+            tmp.resize(max_x-4);
+            tmp.append("~");
+        }
+
+        wattron(win, COLOR_PAIR(3) | A_BOLD);
+        mvwhline(win, 5, 1, ' ', max_x-2); //Clear the line.
+        wmove(win, 5, 1);
+        waddch(win, ACS_RARROW);
+        wprintw(win, "%s", tmp.c_str());
+        wattroff(win, COLOR_PAIR(3) | A_BOLD);
+        wrefresh(win);
     }
 }
 
@@ -665,21 +815,23 @@ void VM::Manager::getStates()
 
 void VM::Manager::monitorStates(int n)
 {
-
     while (stop == false)
     {
         virEventRunDefaultImpl(); // Run the event loop
 
         if (tmp_vmstate != nullptr)
         {
-            // VMState v  = *tmp_vmstate;
-            lifycycleEventToString(tmp_vmstate);
+            VMState vmstate = *tmp_vmstate; //copy to be done with tmp_vmstate, quickly.
+
+            delete tmp_vmstate;
+            tmp_vmstate = nullptr;
+
+
+            lifycycleEventToString(vmstate);
 
             // Logging::Manager& log_mgr = Logging::Manager::getInstance();
             // log_mgr.write(LOG_CRIT, tmp_vmstate->name.c_str());
 
-            delete tmp_vmstate;
-            tmp_vmstate = nullptr;
         }
     }
 
