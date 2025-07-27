@@ -613,80 +613,12 @@ void VM::Manager::setInitialVMwindowsState()
         ss << initialStateToString(vms[i].state) << vms[i].reason;
 
         writeToUI(vms[i].name, ss.str(), i);
-
-
-        // std::string vm_window_selector;
-        //
-        // switch (i)
-        // {
-        //     case 0:
-        //         vm_window_selector = "UI::Windows::VMControl::One";
-        //         break;
-        //     case 1:
-        //         vm_window_selector = "UI::Windows::VMControl::Two";
-        //         break;
-        //     case 2:
-        //         vm_window_selector = "UI::Windows::VMControl::Three";
-        //         break;
-        //     case 3:
-        //         vm_window_selector = "UI::Windows::VMControl::Four";
-        //         break;
-        //     default:
-        //     {
-        //         // throw("should never get to here.");
-        //         throw(std::runtime_error("should never get to here."));
-        //     }
-        // }
-        //
-        //
-        // UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-        // WINDOW* win = collection.find(vm_window_selector)->get_window();
-        // int max_x = getmaxx(win);
-        //
-        // // name = vms[i].name;
-        // if (name.length() > max_x-5)
-        // {
-        //     name.resize(12);
-        //     name.append("~"); //TODO test this with a long vm name
-        // }
-        //
-        // int start_col = (max_x - name.length()) / 2;
-        //
-        // mvwprintw(win, 2, start_col, "%s", name.c_str());
-        //
-        // // std::stringstream ss;
-        // // ss << " " << initialStateToString(vms[i].state) << ": " << vms[i].reason;
-        //
-        // // INFO: in the unknown even that the string is longer than the
-        // // available space, truncate it so it doesn't write out of the
-        // // window.
-        // std::string tmp = ss.str();
-        // if (tmp.length() > max_x-4)
-        // {
-        //     tmp.resize(max_x-4);
-        //     tmp.append("~");
-        // }
-        //
-        // // Logging::Manager& log_mgr = Logging::Manager::getInstance();
-        // // log_mgr.write(LOG_CRIT, tmp.c_str());
-        //
-        // wattron(win, COLOR_PAIR(3) | A_BOLD);
-        // mvwhline(win, 5, 1, ' ', max_x-2); //Clear the line.
-        // wmove(win, 5, 1);
-        // waddch(win, ACS_RARROW);
-        // wprintw(win, "%s", tmp.c_str());
-        // wattroff(win, COLOR_PAIR(3) | A_BOLD);
-        // wrefresh(win);
     }
 }
 
 
 void VM::Manager::updateVMwindows(VMState v = VMState())
 {
-
-    // bool redoit = false;
-
-
     //TODO compare to all other vms to see if truncating will result in identical names. Then adjust.
     //TODO test/program as if there are no VMs
     for (int i = 0; i < vms.size(); i++) //TODO use tmp_vmstate to store...
@@ -703,69 +635,7 @@ void VM::Manager::updateVMwindows(VMState v = VMState())
 
             ss << lifecyecleStateToString(v.state) << v.reason;
 
-
-            std::string vm_window_selector;
-
-            switch (i)
-            {
-                case 0:
-                    vm_window_selector = "UI::Windows::VMControl::One";
-                    break;
-                case 1:
-                    vm_window_selector = "UI::Windows::VMControl::Two";
-                    break;
-                case 2:
-                    vm_window_selector = "UI::Windows::VMControl::Three";
-                    break;
-                case 3:
-                    vm_window_selector = "UI::Windows::VMControl::Four";
-                    break;
-                default:
-                {
-                    // throw("should never get to here.");
-                    throw(std::runtime_error("should never get to here."));
-                }
-            }
-
-
-            UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-            WINDOW* win = collection.find(vm_window_selector)->get_window();
-            int max_x = getmaxx(win);
-
-            // name = vms[i].name;
-            if (name.length() > max_x-5)
-            {
-                name.resize(12);
-                name.append("~"); //TODO test this with a long vm name
-            }
-
-            int start_col = (max_x - name.length()) / 2;
-
-            mvwprintw(win, 2, start_col, "%s", name.c_str());
-
-            // std::stringstream ss;
-            // ss << " " << initialStateToString(vms[i].state) << ": " << vms[i].reason;
-
-            // INFO: in the unknown even that the string is longer than the
-            // available space, truncate it so it doesn't write out of the
-            // window.
-            std::string tmp = ss.str();
-            if (tmp.length() > max_x-4)
-            {
-                tmp.resize(max_x-4);
-                tmp.append("~");
-            }
-
-            // Logging::Manager& log_mgr = Logging::Manager::getInstance();
-            // log_mgr.write(LOG_CRIT, tmp.c_str());
-
-            wattron(win, COLOR_PAIR(3) | A_BOLD);
-            mvwhline(win, 5, 1, ' ', max_x-2); //Clear the line.
-            wmove(win, 5, 1);
-            waddch(win, ACS_RARROW);
-            wprintw(win, "%s", tmp.c_str());
-            wattroff(win, COLOR_PAIR(3) | A_BOLD);
-            wrefresh(win);
+            writeToUI(vms[i].name, ss.str(), i);
         }
     }
 }
