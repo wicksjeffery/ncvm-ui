@@ -7,14 +7,14 @@
 #include <string>
 #include <vector>
 #include <utility> // Required for std::pair
-
+#include <iostream>
 namespace VM
 {
     // void errorHandler(void *userdata, virErrorPtr error);
 
     struct VMState
     {
-        const char* name;
+        std::string name;
         // std::string name;
         int state;
         int reason;
@@ -30,7 +30,10 @@ namespace VM
                 name(other.name),
                 state(other.state),
                 reason(other.reason)
-        {}
+        {
+            // std::cout << "copy ctor: " << std::endl;
+        }
+
         // Declare ClassB as a friend class.
         // This grants all member functions of ClassB access to private_data_A.
         // friend class Manager;
@@ -62,11 +65,16 @@ namespace VM
         const char* getInitialState(int);
 
         //BEGIN TODO combign these two functions
-        void updateVMwindows(VMState);
-        const char* lifycycleEventToString(VMState);
+        void updateVMwindows(VMState v);
+        void setInitialVMwindowsState();
+        const char* lifycycleEvent(VMState);
         //END TODO combign these two functions
 
-        const char* initialStateToString(int)
+        const char* initialStateToString(int);
+
+        const char* lifecyecleStateToString(int);
+
+        void writeToUI(std::string, std::string, unsigned short);
 
         // VMState _vmstate;
 

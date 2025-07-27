@@ -15,7 +15,8 @@ int main(int argc, char* argv[])
 {
     try
     {
-        // VM::Manager vmm1;
+        // VM::Manager vmm_test;
+        // std::thread vmm_thread_test(&VM::Manager::monitorStates, &vmm_test, 9);
         // return 0;
 
         CommandLineArgs& cl = CommandLineArgs::getInstance();
