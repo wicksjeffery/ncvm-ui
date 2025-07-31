@@ -20,6 +20,7 @@ set(SRC_LIST
     logging/writer.cpp
     ui/layout.cpp
     ui/event-handler.cpp
+    ui/windows/primary/stdscr.cpp
     ui/windows/collection.cpp
     ui/windows/rectangle.cpp
     ui/windows/background.cpp

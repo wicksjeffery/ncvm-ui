@@ -132,7 +132,7 @@ UI::Layout::Layout()
 
 
     // outputFile.close();
-
+    save(new OptionsButton(1, 9, 0, 0));
     save(new Background(LINES, COLS, 0, 0));
     save(new VMControl::VMOutterFrame(10, COLS-4, 2, 2));
     save(new VMControl::One(first_vm_start_x));
@@ -140,7 +140,7 @@ UI::Layout::Layout()
     save(new VMControl::Three(third_vm_start_x));
     save(new VMControl::Four(fourth_vm_start_x));
     save(new Information(LINES-3, COLS-4, 2, 2));
-    save(new OptionsButton(1, 9, 0, 0));
+    // save(new OptionsButton(1, 9, 0, 0));
     save(new OptionsWindow(14, 15, 1, 0));
     save(new MenuItems::Exit(1, 12, 10, 1));
     save(new MenuItems::About(1, 12, 12, 1));
