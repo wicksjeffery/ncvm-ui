@@ -146,7 +146,9 @@ namespace
     }
 }
 
-VM::Manager::Manager()
+VM::Manager::Manager(UI::Windows::Primary::Stdscr* scr)
+    :
+        scrn(scr)
 {
     // if (!std::filesystem::exists("ncvm-ui.conf"))
     // {
@@ -531,111 +533,169 @@ const char * VM::Manager::lifycycleEvent(VMState v)
 }
 
 
+
+
 #include <ncurses.h>
 
-void VM::Manager::writeToUI(std::string vm_name, std::string vm_state, unsigned short vm_number)
+// void VM::Manager::writeToUI(std::string vm_name, std::string vm_state, unsigned short vm_number)
+void VM::Manager::writeToUI(std::string vm_name,
+                            unsigned short state,
+                            unsigned short reason,
+                            unsigned short vm_number,
+                            bool set_initial_state = false)
 {
-    std::string vm_window_selector;
+    const int max_x = 17; //Current allocated width. Maybe put this in a header somwhere
+    const unsigned short max_label_len = 13; // This should be in a header too? This is max_x - 4 (13 in this case)
 
-    switch (vm_number)
-    {
-        case 0:
-            vm_window_selector = "UI::Windows::VMControl::One";
-            break;
-        case 1:
-            vm_window_selector = "UI::Windows::VMControl::Two";
-            break;
-        case 2:
-            vm_window_selector = "UI::Windows::VMControl::Three";
-            break;
-        case 3:
-            vm_window_selector = "UI::Windows::VMControl::Four";
-            break;
-        default:
-        {
-            // throw("should never get to here.");
-            throw(std::runtime_error("should never get to here."));
-        }
-    }
-
-
-    UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-    WINDOW* win = collection.find(vm_window_selector)->get_window();
-    int max_x = getmaxx(win);
-
-    // name = vms[i].name;
-    if (vm_name.length() > max_x-5)
+    if (vm_name.length() > max_label_len)
     {
         vm_name.resize(12);
         vm_name.append("~"); //TODO test this with a long vm name
     }
 
-    int start_col = (max_x - vm_name.length()) / 2;
+    unsigned short column_position = ((max_x - vm_name.length()) / 2 ) + scrn->getVMwindowStartX(vm_number);
 
-    mvwprintw(win, 2, start_col, "%s", vm_name.c_str());
 
-    // std::stringstream ss;
-    // ss << " " << initialStateToString(vms[i].state) << ": " << vms[i].reason;
+    //todo DO i even need to set colors (earlier)?
+    int color_to_use = COLOR_PAIR(8);
+
+    if (!set_initial_state)
+    {
+        switch (state)
+        {
+            case 6: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // shutoff
+            case 2: color_to_use = COLOR_PAIR(14) | A_BOLD; break; // running
+            case 5: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // stopped
+            default: color_to_use = COLOR_PAIR(8) | A_BOLD; break;
+        }
+    }
+    else if (set_initial_state == true)
+    {
+        switch (state)
+        {
+            case 5: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // shutoff
+            case 1: color_to_use = COLOR_PAIR(14) | A_BOLD; break; // running
+            default: color_to_use = COLOR_PAIR(8) | A_BOLD; break;
+        }
+    }
+
+
+    attron(color_to_use);
+    mvhline(4, scrn->getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+    mvhline(5, scrn->getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+    mvhline(6, scrn->getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+
+    mvprintw(5, column_position, "%s", vm_name.c_str());
+    attroff(color_to_use);
+
+
+
+    std::stringstream ss;
+    if (!set_initial_state)
+    {
+        ss << lifecyecleStateToString(state) << reason;
+    }
+    else if (set_initial_state == true)
+    {
+        ss << initialStateToString(state) << reason;
+    }
+
 
     // INFO: in the unknown even that the string is longer than the
     // available space, truncate it so it doesn't write out of the
     // window.
-    // std::string tmp = ss.str();
-    if (vm_state.length() > max_x-4)
+    std::string tmp = ss.str();
+    if (tmp.length() > max_label_len+1)
     {
-        vm_state.resize(max_x-4);
-        vm_state.append("~");
+        tmp.resize(max_label_len);
+        tmp.append("~");
     }
 
-    // Logging::Manager& log_mgr = Logging::Manager::getInstance();
-    // log_mgr.write(LOG_CRIT, tmp.c_str());
+    // // Logging::Manager& log_mgr = Logging::Manager::getInstance();
+    // // log_mgr.write(LOG_CRIT, tmp.c_str());
 
-    wattron(win, COLOR_PAIR(3) | A_BOLD);
-    mvwhline(win, 5, 1, ' ', max_x-2); //Clear the line.
-    wmove(win, 5, 1);
-    waddch(win, ACS_RARROW);
-    wprintw(win, "%s", vm_state.c_str());
-    wattroff(win, COLOR_PAIR(3) | A_BOLD);
-    wrefresh(win);
+    attron(COLOR_PAIR(3) | A_BOLD);
+    mvhline(8, scrn->getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+    move(8, scrn->getVMwindowStartX(vm_number)+1);
+    addch(ACS_RARROW);
+    printw("%s", tmp.c_str());
+    attroff(COLOR_PAIR(3) | A_BOLD);
+
+
+    refresh();
+
+
 }
+
+
+//TODO can I use (or maybe better: delete) this code?
+// void UI::Windows::Primary::Stdscr::writeVMinformation(short vm_x_start, const char* label)
+// {
+//     attron(COLOR_PAIR(4));
+//     mvhline(4, vm_x_start+1, ' ', vm_box_width-2);
+//     mvhline(5, vm_x_start+1, ' ', vm_box_width-2);
+//     mvhline(6, vm_x_start+1, ' ', vm_box_width-2);
+//     attroff(COLOR_PAIR(4));
+//
+//
+//     attron(COLOR_PAIR(3));
+//     //TODO do truncate here
+//     mvprintw(5, vm_x_start+2, "%s", label);
+//     mvhline(4 + 3 + 1, vm_x_start+1, ' ', vm_box_width-2);
+//     attroff(COLOR_PAIR(3));
+// }
+
+
+
 
 void VM::Manager::setInitialVMwindowsState()
 {
-    for (int i = 0; i < vms.size(); i++) //TODO use tmp_vmstate to store...
+    for (int vm_number = 0; vm_number < vms.size(); vm_number++) //TODO use tmp_vmstate to store...
     {
-        std::string name;
-        std::stringstream ss;
+        // std::string name;
+        // std::stringstream ss;
 
-        name = vms[i].name;
+        // name = vms[vm_number].name;
         // vms[i].state = v.state;
         // vms[i].reason = v.reason;
 
-        ss << initialStateToString(vms[i].state) << vms[i].reason;
+        // ss << initialStateToString(vms[i].state) << vms[i].reason;
 
-        writeToUI(vms[i].name, ss.str(), i);
+        // writeToUI(vms[i].name, ss.str(), i);
+        writeToUI(vms[vm_number].name,
+                  vms[vm_number].state,
+                  vms[vm_number].reason,
+                  vm_number,
+                  true);
     }
 }
 
 
 void VM::Manager::updateVMwindows(VMState v = VMState())
-{
+{//return;
     //TODO compare to all other vms to see if truncating will result in identical names. Then adjust.
     //TODO test/program as if there are no VMs
-    for (int i = 0; i < vms.size(); i++) //TODO use tmp_vmstate to store...
+    for (int vm_number = 0; vm_number < vms.size(); vm_number++) //TODO use tmp_vmstate to store...
     {
-        std::string name;
-        std::stringstream ss;
+        // std::string name;
+        // std::stringstream ss;
 
 
-        if (v.name == vms[i].name)
+        if (v.name == vms[vm_number].name)
         {
-            name = v.name;
-            vms[i].state = v.state;
-            vms[i].reason = v.reason;
+            // name = v.name;
+            vms[vm_number].state = v.state;
+            vms[vm_number].reason = v.reason;
 
-            ss << lifecyecleStateToString(v.state) << v.reason;
+            // ss << lifecyecleStateToString(v.state) << v.reason;
 
-            writeToUI(vms[i].name, ss.str(), i);
+            // writeToUI(vms[i].name, ss.str(), i);
+            // writeToUI(vms[vm_number].name, vms[vm_number].state, vms[vm_number].reason, vm_number);
+            writeToUI(vms[vm_number].name,
+                      vms[vm_number].state,
+                      vms[vm_number].reason,
+                      vm_number,
+                      false);
         }
     }
 }
@@ -719,6 +779,9 @@ void VM::Manager::getStates()
 
     validateConfigFile();
     setInitialVMwindowsState();
+
+
+
     // updateVMwindows(); //After this, we're up and running. Next start listening for events.'
 
     // int eventID;

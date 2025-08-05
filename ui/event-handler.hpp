@@ -7,6 +7,7 @@
 #include "windows/rectangle.hpp"
 #include <unordered_map>
 #include <string>
+#include "../ui/windows/primary/stdscr.hpp"
 
 namespace UI
 {
@@ -16,7 +17,12 @@ namespace UI
 
         void toggleOptionsSelector(bool options_selector_was_clicked);
 
+        UI::Windows::Primary::Stdscr* scrn;
+
     public:
+        EventHandler(UI::Windows::Primary::Stdscr* scr) : scrn(scr){;}
+
+        int listenOLD(int n);
         int listen(int n);
     };
 }
@@ -24,3 +30,4 @@ namespace UI
 
 
 #endif
+

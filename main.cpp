@@ -30,13 +30,13 @@ int main(int argc, char* argv[])
 
 
 
-        //TODO: remove this thread and put display_tail in UI::EventHandler::listen()
+        // //TODO: remove this thread and put display_tail in UI::EventHandler::listen()
         std::thread logger_thread(&Logging::Manager::display_tail, &log_mgr, 9);
 
-        VM::Manager vmm;
+        VM::Manager vmm(layout.getSTDscreen());
         std::thread vmm_thread(&VM::Manager::monitorStates, &vmm, 9);
 
-        UI::EventHandler event_handler;
+        UI::EventHandler event_handler(layout.getSTDscreen());
         auto f1 = std::async(&UI::EventHandler::listen, &event_handler, 9);
 
 

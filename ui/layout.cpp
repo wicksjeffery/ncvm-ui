@@ -3,6 +3,7 @@
 #include "windows/rectangle.hpp"
 #include "windows/background.hpp"
 #include "windows/information.hpp"
+// #include "windows/primary/stdscr.hpp"
 #include "windows/vm-control/vm-outter-frame.hpp"
 #include "windows/vm-control/one.hpp"
 #include "windows/vm-control/two.hpp"
@@ -41,7 +42,7 @@ UI::Layout::Layout()
     keypad(stdscr, TRUE);
     // nodelay(stdscr, TRUE);
     // timeout(0);
-    mousemask(BUTTON1_RELEASED | BUTTON2_PRESSED, NULL);
+    mousemask(BUTTON1_RELEASED | BUTTON2_PRESSED | BUTTON2_TRIPLE_CLICKED, NULL);
 
     start_color();
     init_pair(1, COLOR_BLUE, COLOR_BLUE);
@@ -61,7 +62,9 @@ UI::Layout::Layout()
 
     init_pair(11, COLOR_BLACK, COLOR_CYAN);
     init_pair(12, COLOR_GREEN, COLOR_GREEN);
-    // init_pair(11, COLOR_YELLOW, COLOR_MAGENTA);
+    init_pair(13, COLOR_BLACK, COLOR_YELLOW);
+    init_pair(14, COLOR_WHITE, COLOR_GREEN); //this one for vm is running
+
     // init_pair(11, COLOR_YELLOW, COLOR_WHITE);
 
 
@@ -130,76 +133,35 @@ UI::Layout::Layout()
     // END: setup for vm windows
 
 
-
-    // outputFile.close();
-    save(new OptionsButton(1, 9, 0, 0));
-    save(new Background(LINES, COLS, 0, 0));
-    save(new VMControl::VMOutterFrame(10, COLS-4, 2, 2));
-    save(new VMControl::One(first_vm_start_x));
-    save(new VMControl::Two(second_vm_start_x));
-    save(new VMControl::Three(third_vm_start_x));
-    save(new VMControl::Four(fourth_vm_start_x));
-    save(new Information(LINES-3, COLS-4, 2, 2));
+    //TODO make sure to delete in dtor
+    // // outputFile.close();
     // save(new OptionsButton(1, 9, 0, 0));
+    // save(new Background(LINES, COLS, 0, 0));
+    // save(new VMControl::VMOutterFrame(10, COLS-4, 2, 2));
+    // save(new VMControl::One(first_vm_start_x));
+    // save(new VMControl::Two(second_vm_start_x));
+    // save(new VMControl::Three(third_vm_start_x));
+    // save(new VMControl::Four(fourth_vm_start_x));
+    // save(new Information(LINES-3, COLS-4, 2, 2));
+    // // save(new OptionsButton(1, 9, 0, 0));
     save(new OptionsWindow(14, 15, 1, 0));
     save(new MenuItems::Exit(1, 12, 10, 1));
     save(new MenuItems::About(1, 12, 12, 1));
-    save(new Journal::OutterFrame(LINES-15, COLS-4, 13, 2));
+    // save(new Journal::OutterFrame(LINES-15, COLS-4, 13, 2));
     save(new Journal::Inside(LINES-18, COLS-11, 14, 5));
-    // save(new Status::OutterFrame(6, COLS-4, LINES-8, 2));
-    // save(new Status::Inside(3, COLS-11, LINES-7, 5)); //TODO leave the namespace for clarity.
-    save(new ApplicationStatus::Box(1, COLS, LINES-1, 0));
-
-
-
-    // UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-    // //
-    // wattron(collection.find("One")->get_window(), COLOR_PAIR(3));
-    // box(collection.find("One")->get_window(), 0, 0),
-    // mvwprintw(collection.find("One")->get_window(),
-              // 2,
-              // 3, "01234567890");
-    // wattroff(collection.find("One")->get_window(), COLOR_PAIR(3));
-    // wattron(collection.find("Two")->get_window(), COLOR_PAIR(3));
-    // box(collection.find("Two")->get_window(), 0, 0),
-    // wattron(collection.find("Three")->get_window(), COLOR_PAIR(3));
-    // box(collection.find("Three")->get_window(), 0, 0),
-    // wattron(collection.find("Four")->get_window(), COLOR_PAIR(3));
-    // box(collection.find("Four")->get_window(), 0, 0),
+    // // save(new Status::OutterFrame(6, COLS-4, LINES-8, 2));
+    // // save(new Status::Inside(3, COLS-11, LINES-7, 5)); //TODO leave the namespace for clarity.
+    // save(new ApplicationStatus::Box(1, COLS, LINES-1, 0));
     //
-    // wattron(collection.find("Background")->get_window(), COLOR_PAIR(3));
-    // mvwprintw(collection.find("Background")->get_window(),
-    //           9,
-    //           COLS-5, "QRXYZ");
-    // collection.printAll();
-
-    // mvwprintw(collection.find("One")->get_window(),
-    //           1,
-    //           14, "1");
-    // // mvwprintw(collection.find("VMOutterFrame")->get_window(),
-    //           // 1,
-    //           // second_vm_start_x, "2");
-    // wattroff(collection.find("One")->get_window(), COLOR_PAIR(3));
-    // wrefresh(collection.find("One")->get_window());
-
-    // wattron(collection.find("VMOutterFrame")->get_window(), COLOR_PAIR(5));
-    // mvwprintw(collection.find("VMOutterFrame")->get_window(),
-              // 1,
-              // 4, "012345678901");
-    // wattroff(collection.find("VMOutterFrame")->get_window(), COLOR_PAIR(3));
 
 
-
-    // Announce to logging that all the windows are created.
-    // Logger& logger = Logger::getInstance(); //TODO write to application log that ncvm-ui is started.
-    // Logger::getInstance();
-    // logger.write("key");
-
-    // Uncomment to see what's in the collection:
-    // UI::Windows::Collection::getInstance().printAll();
+    scrn = new Windows::Primary::Stdscr;
 
     update_panels();
     doupdate();
+
+
+    // getch();
 }
 
 void UI::Layout::save(Windows::Rectangle* w)
@@ -271,6 +233,8 @@ UI::Layout::~Layout()
     // {
     //     delete val;
     // }
+
+    delete scrn;
 
     endwin();
 }

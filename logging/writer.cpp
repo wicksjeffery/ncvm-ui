@@ -62,6 +62,7 @@ Logging::Writer::Writer(std::string log_entry)
 
 void Logging::Writer::write()
 {
+
     UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
 
     wattron(collection.find("UI::Windows::Journal::Inside")->get_window(), COLOR_PAIR(color) | A_BOLD);

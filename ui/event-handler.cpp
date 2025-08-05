@@ -37,18 +37,89 @@ void UI::EventHandler::toggleOptionsSelector(bool options_selector_was_clicked =
         show_panel(collection.find("UI::Windows::OptionsWindow")->get_panel());
         show_panel(collection.find("UI::Windows::MenuItems::About")->get_panel());
         show_panel(collection.find("UI::Windows::MenuItems::Exit")->get_panel());
-        collection.find("UI::Windows::OptionsButton")->turnOnHighlighting();
+        // collection.find("UI::Windows::OptionsButton")->turnOnHighlighting();
     } else
     {
         hide_panel(collection.find("UI::Windows::OptionsWindow")->get_panel());
         hide_panel(collection.find("UI::Windows::MenuItems::About")->get_panel());
         hide_panel(collection.find("UI::Windows::MenuItems::Exit")->get_panel());
-        collection.find("UI::Windows::OptionsButton")->turnOffHighlighting();
+        // collection.find("UI::Windows::OptionsButton")->turnOffHighlighting();
     }
 }
 
-
 int UI::EventHandler::listen(int n)
+{
+    // VM::Manager vmm;
+
+    // std::ofstream f("/tmp/foo1", std::fstream::trunc);
+    //
+    // f << "okpeT: " << std::hex << std::this_thread::get_id() << std::endl;
+    // f.close();
+    // std::cout << "\a";
+
+    MEVENT mouse_event;
+
+    while (exit_program == false)
+    {
+        // vmm.monitorStates();
+
+        int getch_return_value = getch();
+
+        if (getch_return_value == KEY_MOUSE && getmouse(&mouse_event) == OK)
+        {
+            if (mouse_event.bstate & BUTTON1_RELEASED)
+            {
+                /*
+                 * NOTE: GPM selection workaround:
+                 * The left mouse button leaves selections highlighted.
+                 */
+
+                std::cout << std::endl;
+                std::cout << '\a' << std::flush;
+                clearok(stdscr, TRUE);
+                update_panels();
+                doupdate();
+            }
+
+            if (mouse_event.bstate & BUTTON2_PRESSED)
+            {
+                if (mouse_event.y == 0 && mouse_event.x > 0 && mouse_event.x < 8)
+                {
+                    toggleOptionsSelector(true);
+
+                    update_panels();
+                    doupdate();
+
+                    // attron(COLOR_PAIR(5));
+                    // // mvhline(4, scrn->getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+                    //
+                    // mvprintw(1, 0, "  ");
+                    // mvprintw(1, 0, "%d", mouse_event.x);
+                    // attroff(COLOR_PAIR(5));
+                    //
+                    //
+                    // refresh();
+                }
+                // if (mouse_event.y == 0 && mouse_event.x > 0 && mouse_event.x < 8)
+                if (mouse_event.y > 3 && mouse_event.y < 7)
+                {
+                    scrn->selectVMwindow(mouse_event.x);
+
+                    // attron(COLOR_PAIR(5));
+                    // mvprintw(1, 0, "  ");
+                    // mvprintw(1, 0, "%d", mouse_event.x);
+                    // attroff(COLOR_PAIR(5));
+                    // refresh();
+                }
+            }
+
+        }
+    }
+    return 1; //returning arbitrary value (not used yet)
+}
+
+
+int UI::EventHandler::listenOLD(int n)
 {
     // VM::Manager vmm;
 

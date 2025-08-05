@@ -8,6 +8,9 @@
 #include <vector>
 #include <utility> // Required for std::pair
 #include <iostream>
+
+#include "../ui/windows/primary/stdscr.hpp"
+
 namespace VM
 {
     // void errorHandler(void *userdata, virErrorPtr error);
@@ -74,12 +77,18 @@ namespace VM
 
         const char* lifecyecleStateToString(int);
 
-        void writeToUI(std::string, std::string, unsigned short);
+        void writeToUI(std::string,
+                       unsigned short,
+                       unsigned short,
+                       unsigned short,
+                       bool set_initial_state);
 
         // VMState _vmstate;
 
+        UI::Windows::Primary::Stdscr* scrn;
+
     public:
-        Manager();
+        Manager(UI::Windows::Primary::Stdscr* scr);
         ~Manager();
 
         void monitorStates(int);
