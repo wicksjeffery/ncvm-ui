@@ -2,7 +2,7 @@
 #define UI_WINDOWS_PRIMARY_STDSCR
 
 // #include "rectangle.hpp"
-
+#include <string>
 #include <ncurses.h>
 namespace UI::Windows::Primary
 {
@@ -18,6 +18,9 @@ namespace UI::Windows::Primary
         void allocateVMwindows();
         void drawVMwindow(short);
         void writeVMinformation(short, const char*);
+
+        // const char* initialStateToString(int s);
+        // const char* lifecyecleStateToString(int s);
     public:
         Stdscr();
 
@@ -48,6 +51,13 @@ namespace UI::Windows::Primary
                 default: throw("crap");
             }
         }
+
+        void writeToUI(std::string vm_name,
+                       // unsigned short state,
+                       std::string state,
+                       unsigned short reason,
+                       unsigned short vm_number,
+                       bool);
     };
 }
 

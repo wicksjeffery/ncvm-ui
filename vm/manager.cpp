@@ -359,15 +359,15 @@ const char* VM::Manager::initialStateToString(int s)
 {
     switch (s)
     {
-        case VIR_DOMAIN_NOSTATE: return " nostate: ";
-        case VIR_DOMAIN_RUNNING: return " running: ";
-        case VIR_DOMAIN_BLOCKED: return " blocked: ";
-        case VIR_DOMAIN_PAUSED: return " paused: ";
-        case VIR_DOMAIN_SHUTDOWN: return " shutdown: ";
-        case VIR_DOMAIN_SHUTOFF: return " shutoff: ";
-        case VIR_DOMAIN_CRASHED: return " crashed: ";
-        case VIR_DOMAIN_PMSUSPENDED: return " suspended: ";
-        default: return " unknown: ";
+        case VIR_DOMAIN_NOSTATE: return "nostate";
+        case VIR_DOMAIN_RUNNING: return "running";
+        case VIR_DOMAIN_BLOCKED: return "blocked";
+        case VIR_DOMAIN_PAUSED: return "paused";
+        case VIR_DOMAIN_SHUTDOWN: return "shutdown";
+        case VIR_DOMAIN_SHUTOFF: return "shutoff";
+        case VIR_DOMAIN_CRASHED: return "crashed";
+        case VIR_DOMAIN_PMSUSPENDED: return "suspended";
+        default: return "unknown";
     }
 }
 
@@ -375,16 +375,16 @@ const char* VM::Manager::lifecyecleStateToString(int s)
 {
     switch (s)
     {
-        case VIR_DOMAIN_EVENT_DEFINED: return " defined: ";
-        case VIR_DOMAIN_EVENT_UNDEFINED: return " undefined: ";
-        case VIR_DOMAIN_EVENT_STARTED: return " started: ";
-        case VIR_DOMAIN_EVENT_SUSPENDED: return " suspended: ";
-        case VIR_DOMAIN_EVENT_RESUMED: return " resumed: ";
-        case VIR_DOMAIN_EVENT_STOPPED: return " stopped: ";
-        case VIR_DOMAIN_EVENT_SHUTDOWN: return " shutdown: ";
-        case VIR_DOMAIN_EVENT_PMSUSPENDED: return " pm_suspended: ";
-        case VIR_DOMAIN_EVENT_CRASHED: return " crashed: ";
-        default: return " error: ";
+        case VIR_DOMAIN_EVENT_DEFINED: return "defined";
+        case VIR_DOMAIN_EVENT_UNDEFINED: return "undefined";
+        case VIR_DOMAIN_EVENT_STARTED: return "started";
+        case VIR_DOMAIN_EVENT_SUSPENDED: return "suspended";
+        case VIR_DOMAIN_EVENT_RESUMED: return "resumed";
+        case VIR_DOMAIN_EVENT_STOPPED: return "stopped";
+        case VIR_DOMAIN_EVENT_SHUTDOWN: return "shutdown";
+        case VIR_DOMAIN_EVENT_PMSUSPENDED: return "pm_suspended";
+        case VIR_DOMAIN_EVENT_CRASHED: return "crashed";
+        default: return "error";
     }
 }
 
@@ -535,97 +535,98 @@ const char * VM::Manager::lifycycleEvent(VMState v)
 
 
 
-#include <ncurses.h>
-
-// void VM::Manager::writeToUI(std::string vm_name, std::string vm_state, unsigned short vm_number)
-void VM::Manager::writeToUI(std::string vm_name,
-                            unsigned short state,
-                            unsigned short reason,
-                            unsigned short vm_number,
-                            bool set_initial_state = false)
-{
-    const int max_x = 17; //Current allocated width. Maybe put this in a header somwhere
-    const unsigned short max_label_len = 13; // This should be in a header too? This is max_x - 4 (13 in this case)
-
-    if (vm_name.length() > max_label_len)
-    {
-        vm_name.resize(12);
-        vm_name.append("~"); //TODO test this with a long vm name
-    }
-
-    unsigned short column_position = ((max_x - vm_name.length()) / 2 ) + scrn->getVMwindowStartX(vm_number);
-
-
-    //todo DO i even need to set colors (earlier)?
-    int color_to_use = COLOR_PAIR(8);
-
-    if (!set_initial_state)
-    {
-        switch (state)
-        {
-            case 6: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // shutoff
-            case 2: color_to_use = COLOR_PAIR(14) | A_BOLD; break; // running
-            case 5: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // stopped
-            default: color_to_use = COLOR_PAIR(8) | A_BOLD; break;
-        }
-    }
-    else if (set_initial_state == true)
-    {
-        switch (state)
-        {
-            case 5: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // shutoff
-            case 1: color_to_use = COLOR_PAIR(14) | A_BOLD; break; // running
-            default: color_to_use = COLOR_PAIR(8) | A_BOLD; break;
-        }
-    }
-
-
-    attron(color_to_use);
-    mvhline(4, scrn->getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
-    mvhline(5, scrn->getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
-    mvhline(6, scrn->getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
-
-    mvprintw(5, column_position, "%s", vm_name.c_str());
-    attroff(color_to_use);
-
-
-
-    std::stringstream ss;
-    if (!set_initial_state)
-    {
-        ss << lifecyecleStateToString(state) << reason;
-    }
-    else if (set_initial_state == true)
-    {
-        ss << initialStateToString(state) << reason;
-    }
-
-
-    // INFO: in the unknown even that the string is longer than the
-    // available space, truncate it so it doesn't write out of the
-    // window.
-    std::string tmp = ss.str();
-    if (tmp.length() > max_label_len+1)
-    {
-        tmp.resize(max_label_len);
-        tmp.append("~");
-    }
-
-    // // Logging::Manager& log_mgr = Logging::Manager::getInstance();
-    // // log_mgr.write(LOG_CRIT, tmp.c_str());
-
-    attron(COLOR_PAIR(3) | A_BOLD);
-    mvhline(8, scrn->getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
-    move(8, scrn->getVMwindowStartX(vm_number)+1);
-    addch(ACS_RARROW);
-    printw("%s", tmp.c_str());
-    attroff(COLOR_PAIR(3) | A_BOLD);
-
-
-    refresh();
-
-
-}
+// #include <ncurses.h>
+//
+// // void VM::Manager::writeToUI(std::string vm_name, std::string vm_state, unsigned short vm_number)
+// //TODO MOVETHISFUNCTION TO UI::Windows::Primary::Stdscr TO USE IN event_handler and two other places
+// void VM::Manager::writeToUI(std::string vm_name,
+//                             unsigned short state,
+//                             unsigned short reason,
+//                             unsigned short vm_number,
+//                             bool set_initial_state = false)
+// {
+//     const int max_x = 17; //Current allocated width. Maybe put this in a header somwhere
+//     const unsigned short max_label_len = 13; // This should be in a header too? This is max_x - 4 (13 in this case)
+//
+//     if (vm_name.length() > max_label_len)
+//     {
+//         vm_name.resize(12);
+//         vm_name.append("~"); //TODO test this with a long vm name
+//     }
+//
+//     unsigned short column_position = ((max_x - vm_name.length()) / 2 ) + scrn->getVMwindowStartX(vm_number);
+//
+//
+//     //todo DO i even need to set colors (earlier)?
+//     int color_to_use = COLOR_PAIR(8);
+//
+//     if (!set_initial_state)
+//     {
+//         switch (state)
+//         {
+//             case 6: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // shutoff
+//             case 2: color_to_use = COLOR_PAIR(14) | A_BOLD; break; // running
+//             case 5: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // stopped
+//             default: color_to_use = COLOR_PAIR(8) | A_BOLD; break;
+//         }
+//     }
+//     else if (set_initial_state == true)
+//     {
+//         switch (state)
+//         {
+//             case 5: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // shutoff
+//             case 1: color_to_use = COLOR_PAIR(14) | A_BOLD; break; // running
+//             default: color_to_use = COLOR_PAIR(8) | A_BOLD; break;
+//         }
+//     }
+//
+//
+//     attron(color_to_use);
+//     mvhline(4, scrn->getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+//     mvhline(5, scrn->getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+//     mvhline(6, scrn->getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+//
+//     mvprintw(5, column_position, "%s", vm_name.c_str());
+//     attroff(color_to_use);
+//
+//
+//
+//     std::stringstream ss;
+//     if (!set_initial_state)
+//     {
+//         ss << lifecyecleStateToString(state) << reason;
+//     }
+//     else if (set_initial_state == true)
+//     {
+//         ss << initialStateToString(state) << reason;
+//     }
+//
+//
+//     // INFO: in the unknown even that the string is longer than the
+//     // available space, truncate it so it doesn't write out of the
+//     // window.
+//     std::string tmp = ss.str();
+//     if (tmp.length() > max_label_len+1)
+//     {
+//         tmp.resize(max_label_len);
+//         tmp.append("~");
+//     }
+//
+//     // // Logging::Manager& log_mgr = Logging::Manager::getInstance();
+//     // // log_mgr.write(LOG_CRIT, tmp.c_str());
+//
+//     attron(COLOR_PAIR(3) | A_BOLD);
+//     mvhline(8, scrn->getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+//     move(8, scrn->getVMwindowStartX(vm_number)+1);
+//     addch(ACS_RARROW);
+//     printw("%s", tmp.c_str());
+//     attroff(COLOR_PAIR(3) | A_BOLD);
+//
+//
+//     refresh();
+//
+//
+// }
 
 
 //TODO can I use (or maybe better: delete) this code?
@@ -662,16 +663,17 @@ void VM::Manager::setInitialVMwindowsState()
         // ss << initialStateToString(vms[i].state) << vms[i].reason;
 
         // writeToUI(vms[i].name, ss.str(), i);
-        writeToUI(vms[vm_number].name,
-                  vms[vm_number].state,
-                  vms[vm_number].reason,
-                  vm_number,
-                  true);
+        scrn->writeToUI(vms[vm_number].name,
+                        // vms[vm_number].state,
+                        initialStateToString(vms[vm_number].state),
+                        vms[vm_number].reason,
+                        vm_number,
+                        true);
     }
 }
 
 
-void VM::Manager::updateVMwindows(VMState v = VMState())
+void VM::Manager::updateVMwindowState(VMState v = VMState())
 {//return;
     //TODO compare to all other vms to see if truncating will result in identical names. Then adjust.
     //TODO test/program as if there are no VMs
@@ -691,11 +693,12 @@ void VM::Manager::updateVMwindows(VMState v = VMState())
 
             // writeToUI(vms[i].name, ss.str(), i);
             // writeToUI(vms[vm_number].name, vms[vm_number].state, vms[vm_number].reason, vm_number);
-            writeToUI(vms[vm_number].name,
-                      vms[vm_number].state,
-                      vms[vm_number].reason,
-                      vm_number,
-                      false);
+            scrn->writeToUI(vms[vm_number].name,
+                            // vms[vm_number].state,
+                            lifecyecleStateToString(vms[vm_number].state),
+                            vms[vm_number].reason,
+                            vm_number,
+                            false);
         }
     }
 }
@@ -820,7 +823,7 @@ void VM::Manager::monitorStates(int n)
             tmp_vmstate = nullptr;
 
 
-            updateVMwindows(vmstate);
+            updateVMwindowState(vmstate);
 
             // Logging::Manager& log_mgr = Logging::Manager::getInstance();
             // log_mgr.write(LOG_CRIT, tmp_vmstate->name.c_str());

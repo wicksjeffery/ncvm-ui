@@ -68,7 +68,7 @@ namespace VM
         const char* getInitialState(int);
 
         //BEGIN TODO combign these two functions
-        void updateVMwindows(VMState v);
+        void updateVMwindowState(VMState v);
         void setInitialVMwindowsState();
         const char* lifycycleEvent(VMState);
         //END TODO combign these two functions
@@ -77,11 +77,11 @@ namespace VM
 
         const char* lifecyecleStateToString(int);
 
-        void writeToUI(std::string,
-                       unsigned short,
-                       unsigned short,
-                       unsigned short,
-                       bool set_initial_state);
+        // void writeToUI(std::string,
+        //                unsigned short,
+        //                unsigned short,
+        //                unsigned short,
+        //                bool set_initial_state);
 
         // VMState _vmstate;
 

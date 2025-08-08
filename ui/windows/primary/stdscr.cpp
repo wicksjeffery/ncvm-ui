@@ -3,6 +3,8 @@
 #include <iostream>
 #include <curses.h>
 
+#include <sstream>
+
 
 void UI::Windows::Primary::Stdscr::writeVMinformation(short vm_x_start, const char* label)
 {
@@ -224,5 +226,174 @@ UI::Windows::Primary::Stdscr::Stdscr()
 
     // refresh();
 }
+
+// #include <libvirt/libvirt-event.h>
+// #include <libvirt/libvirt.h>
+// const char* UI::Windows::Primary::Stdscr::initialStateToString(int s)
+// {
+//     switch (s)
+//     {
+//         case VIR_DOMAIN_NOSTATE: return " nostate: ";
+//         case VIR_DOMAIN_RUNNING: return " running: ";
+//         case VIR_DOMAIN_BLOCKED: return " blocked: ";
+//         case VIR_DOMAIN_PAUSED: return " paused: ";
+//         case VIR_DOMAIN_SHUTDOWN: return " shutdown: ";
+//         case VIR_DOMAIN_SHUTOFF: return " shutoff: ";
+//         case VIR_DOMAIN_CRASHED: return " crashed: ";
+//         case VIR_DOMAIN_PMSUSPENDED: return " suspended: ";
+//         default: return " unknown: ";
+//     }
+// }
+//
+// const char* UI::Windows::Primary::Stdscr::lifecyecleStateToString(int s)
+// {
+//     switch (s)
+//     {
+//         case VIR_DOMAIN_EVENT_DEFINED: return " defined: ";
+//         case VIR_DOMAIN_EVENT_UNDEFINED: return " undefined: ";
+//         case VIR_DOMAIN_EVENT_STARTED: return " started: ";
+//         case VIR_DOMAIN_EVENT_SUSPENDED: return " suspended: ";
+//         case VIR_DOMAIN_EVENT_RESUMED: return " resumed: ";
+//         case VIR_DOMAIN_EVENT_STOPPED: return " stopped: ";
+//         case VIR_DOMAIN_EVENT_SHUTDOWN: return " shutdown: ";
+//         case VIR_DOMAIN_EVENT_PMSUSPENDED: return " pm_suspended: ";
+//         case VIR_DOMAIN_EVENT_CRASHED: return " crashed: ";
+//         default: return " error: ";
+//     }
+// }
+
+// void VM::Manager::writeToUI(std::string vm_name, std::string vm_state, unsigned short vm_number)
+// TO USE IN event_handler and two other places
+void UI::Windows::Primary::Stdscr::writeToUI(std::string vm_name,
+                                             // unsigned short state,
+                                             std::string state,
+                                             unsigned short reason,
+                                             unsigned short vm_number,
+                                             bool set_initial_state)
+{
+    const int max_x = 17; //Current allocated width. Maybe put this in a header somwhere
+    const unsigned short max_label_len = 13; // This should be in a header too? This is max_x - 4 (13 in this case)
+
+    if (vm_name.length() > max_label_len)
+    {
+        vm_name.resize(12);
+        vm_name.append("~"); //TODO test this with a long vm name
+    }
+
+    unsigned short column_position = ((max_x - vm_name.length()) / 2 ) + getVMwindowStartX(vm_number);
+
+
+    //todo DO i even need to set colors (earlier)?
+    int color_to_use = COLOR_PAIR(8);
+
+    /*
+     *     if (!set_initial_state)
+     { *
+     switch (state)
+     {
+         case 6: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // shutoff
+         case 2: color_to_use = COLOR_PAIR(14) | A_BOLD; break; // running
+         case 5: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // stopped
+         default: color_to_use = COLOR_PAIR(8) | A_BOLD; break;
+}
+{
+        switch (state)
+        {
+            case 5: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // shutoff
+            case 1: color_to_use = COLOR_PAIR(14) | A_BOLD; break; // running
+            default: color_to_use = COLOR_PAIR(8) | A_BOLD; break;
+        }
+}
+     *
+     */
+
+
+
+    if (!set_initial_state)
+    {
+        if (state == "shutdown") //6
+        {
+            color_to_use = COLOR_PAIR(5) | A_BOLD;
+        }
+        else if (state == "started") //2
+        {
+             color_to_use = COLOR_PAIR(14) | A_BOLD;
+        }
+        else if (state == "stopped") //5 Should this be the same color as shutdown?
+        {
+            color_to_use = COLOR_PAIR(5) | A_BOLD;
+        }
+        else
+        {
+            color_to_use = COLOR_PAIR(8) | A_BOLD;
+        }
+    }
+    else if (set_initial_state == true)
+    {
+        if (state == "shutoff") //5
+        {
+            color_to_use = COLOR_PAIR(5) | A_BOLD;
+        }
+        else if (state == "running") //1
+        {
+            color_to_use = COLOR_PAIR(14) | A_BOLD;
+        }
+        else
+        {
+            color_to_use = COLOR_PAIR(8) | A_BOLD;
+        }
+    }
+
+
+    attron(color_to_use);
+    mvhline(4, getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+    mvhline(5, getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+    mvhline(6, getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+
+    mvprintw(5, column_position, "%s", vm_name.c_str());
+    attroff(color_to_use);
+
+
+
+    std::stringstream ss;
+//     if (!set_initial_state)
+//     {
+//         ss << " " <<  state << ": " << reason;
+//
+//         // vm_name = state
+//     }
+//     else if (set_initial_state == true)
+//     {
+//         ss << initialStateToString(state) << reason;
+//     }
+    ss << " " <<  state << ": " << reason;
+
+
+    // INFO: in the unknown even that the string is longer than the
+    // available space, truncate it so it doesn't write out of the
+    // window.
+    std::string tmp = ss.str();
+    if (tmp.length() > max_label_len+1)
+    {
+        tmp.resize(max_label_len);
+        tmp.append("~");
+    }
+
+    // // Logging::Manager& log_mgr = Logging::Manager::getInstance();
+    // // log_mgr.write(LOG_CRIT, tmp.c_str());
+
+    attron(COLOR_PAIR(3) | A_BOLD);
+    mvhline(8, getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+    move(8, getVMwindowStartX(vm_number)+1);
+    addch(ACS_RARROW);
+    printw("%s", tmp.c_str());
+    attroff(COLOR_PAIR(3) | A_BOLD);
+
+
+    refresh();
+
+
+}
+
 
 
