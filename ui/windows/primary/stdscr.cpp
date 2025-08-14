@@ -6,6 +6,13 @@
 #include <sstream>
 
 
+UI::Windows::Primary::Stdscr& UI::Windows::Primary::Stdscr::getInstance()
+{
+    static Stdscr instance;
+    return instance;
+}
+
+
 void UI::Windows::Primary::Stdscr::writeVMinformation(short vm_x_start, const char* label)
 {
     attron(COLOR_PAIR(4));
@@ -20,6 +27,24 @@ void UI::Windows::Primary::Stdscr::writeVMinformation(short vm_x_start, const ch
     // mvprintw(5, vm_x_start+2, "%s", label);
     // mvhline(4 + 3 + 1, vm_x_start+1, ' ', vm_box_width-2);
     // attroff(COLOR_PAIR(3));
+}
+
+//TODO call this from void VM::Manager::setInitialVMwindowsState() and
+//    ->  void VM::Manager::updateVMwindowState(VMState v = VMState())
+// or wherever it was that is doing it.
+void UI::Windows::Primary::Stdscr::setVMBoxColor(unsigned short vm_number)
+{
+    const int max_x = 17; //Current allocated width. Maybe put this in a header somwhere
+
+    //TODO maybe move color_to_use setting up here?
+    attron(COLOR_PAIR(3));
+    mvhline(4, getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+    mvhline(5, getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+    mvhline(6, getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+
+    //TODO maybe make vm1_start_x in a std::array too, so I can address it with brackets.
+    mvprintw(5, vm1_start_x, "%s", vm_names[vm_number].c_str());
+    attroff(COLOR_PAIR(3));
 }
 
 
@@ -108,7 +133,11 @@ void UI::Windows::Primary::Stdscr::allocateVMwindows()
     // fourth_vm_start_x += (vm_box_width + third_vm_start_x + available_spaces_leftover);
     // END: setup for vm windows
 
-
+    // attron(COLOR_PAIR(8));
+    //
+    // mvprintw(1, 0, "%s%d", "helloer: ", vm1_start_x);
+    // refresh();
+    // attroff(COLOR_PAIR(8));
 
     // // BEGIN: Weewee box
     // attron(COLOR_PAIR(3));
@@ -223,44 +252,10 @@ UI::Windows::Primary::Stdscr::Stdscr()
     mvhline(LINES-1, 0, ' ', COLS);
     attroff(COLOR_PAIR(12));
 
-
     // refresh();
 }
 
-// #include <libvirt/libvirt-event.h>
-// #include <libvirt/libvirt.h>
-// const char* UI::Windows::Primary::Stdscr::initialStateToString(int s)
-// {
-//     switch (s)
-//     {
-//         case VIR_DOMAIN_NOSTATE: return " nostate: ";
-//         case VIR_DOMAIN_RUNNING: return " running: ";
-//         case VIR_DOMAIN_BLOCKED: return " blocked: ";
-//         case VIR_DOMAIN_PAUSED: return " paused: ";
-//         case VIR_DOMAIN_SHUTDOWN: return " shutdown: ";
-//         case VIR_DOMAIN_SHUTOFF: return " shutoff: ";
-//         case VIR_DOMAIN_CRASHED: return " crashed: ";
-//         case VIR_DOMAIN_PMSUSPENDED: return " suspended: ";
-//         default: return " unknown: ";
-//     }
-// }
-//
-// const char* UI::Windows::Primary::Stdscr::lifecyecleStateToString(int s)
-// {
-//     switch (s)
-//     {
-//         case VIR_DOMAIN_EVENT_DEFINED: return " defined: ";
-//         case VIR_DOMAIN_EVENT_UNDEFINED: return " undefined: ";
-//         case VIR_DOMAIN_EVENT_STARTED: return " started: ";
-//         case VIR_DOMAIN_EVENT_SUSPENDED: return " suspended: ";
-//         case VIR_DOMAIN_EVENT_RESUMED: return " resumed: ";
-//         case VIR_DOMAIN_EVENT_STOPPED: return " stopped: ";
-//         case VIR_DOMAIN_EVENT_SHUTDOWN: return " shutdown: ";
-//         case VIR_DOMAIN_EVENT_PMSUSPENDED: return " pm_suspended: ";
-//         case VIR_DOMAIN_EVENT_CRASHED: return " crashed: ";
-//         default: return " error: ";
-//     }
-// }
+#include <fstream>
 
 // void VM::Manager::writeToUI(std::string vm_name, std::string vm_state, unsigned short vm_number)
 // TO USE IN event_handler and two other places
@@ -281,33 +276,14 @@ void UI::Windows::Primary::Stdscr::writeToUI(std::string vm_name,
     }
 
     unsigned short column_position = ((max_x - vm_name.length()) / 2 ) + getVMwindowStartX(vm_number);
-
+    // attron(COLOR_PAIR(8));
+    //
+    // mvprintw(1, 0, "%s%d", "hewah: ", vm1_start_x);
+    // refresh();
+    // attroff(COLOR_PAIR(8));
 
     //todo DO i even need to set colors (earlier)?
     int color_to_use = COLOR_PAIR(8);
-
-    /*
-     *     if (!set_initial_state)
-     { *
-     switch (state)
-     {
-         case 6: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // shutoff
-         case 2: color_to_use = COLOR_PAIR(14) | A_BOLD; break; // running
-         case 5: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // stopped
-         default: color_to_use = COLOR_PAIR(8) | A_BOLD; break;
-}
-{
-        switch (state)
-        {
-            case 5: color_to_use = COLOR_PAIR(5) | A_BOLD; break; // shutoff
-            case 1: color_to_use = COLOR_PAIR(14) | A_BOLD; break; // running
-            default: color_to_use = COLOR_PAIR(8) | A_BOLD; break;
-        }
-}
-     *
-     */
-
-
 
     if (!set_initial_state)
     {
@@ -353,19 +329,7 @@ void UI::Windows::Primary::Stdscr::writeToUI(std::string vm_name,
     mvprintw(5, column_position, "%s", vm_name.c_str());
     attroff(color_to_use);
 
-
-
     std::stringstream ss;
-//     if (!set_initial_state)
-//     {
-//         ss << " " <<  state << ": " << reason;
-//
-//         // vm_name = state
-//     }
-//     else if (set_initial_state == true)
-//     {
-//         ss << initialStateToString(state) << reason;
-//     }
     ss << " " <<  state << ": " << reason;
 
 
@@ -392,7 +356,11 @@ void UI::Windows::Primary::Stdscr::writeToUI(std::string vm_name,
 
     refresh();
 
-
+    // std::ofstream file("blah.txt", std::ofstream::app);
+    //
+    // file << state << std::endl;
+    //
+    // file.close();
 }
 
 

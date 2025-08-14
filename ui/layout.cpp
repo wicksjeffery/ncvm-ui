@@ -155,7 +155,8 @@ UI::Layout::Layout()
     //
 
 
-    scrn = new Windows::Primary::Stdscr;
+    // scrn = new Windows::Primary::Stdscr;
+    UI::Windows::Primary::Stdscr::getInstance();
 
     update_panels();
     doupdate();
@@ -234,7 +235,7 @@ UI::Layout::~Layout()
     //     delete val;
     // }
 
-    delete scrn;
+    // delete scrn;
 
     endwin();
 }

@@ -17,10 +17,11 @@ namespace UI
 
         void toggleOptionsSelector(bool options_selector_was_clicked);
 
-        UI::Windows::Primary::Stdscr* scrn;
+        // UI::Windows::Primary::Stdscr* scrn;
 
     public:
-        EventHandler(UI::Windows::Primary::Stdscr* scr) : scrn(scr){;}
+        // EventHandler(UI::Windows::Primary::Stdscr* scr) : scrn(scr){;}
+        // EventHandler();
 
         int listenOLD(int n);
         int listen(int n);

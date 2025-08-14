@@ -1,4 +1,5 @@
 #include "event-handler.hpp"
+#include "button1-released.hpp"
 #include <iostream>
 #include "windows/collection.hpp"
 #include "../vm/manager.hpp"
@@ -100,17 +101,20 @@ int UI::EventHandler::listen(int n)
                     //
                     // refresh();
                 }
-                // if (mouse_event.y == 0 && mouse_event.x > 0 && mouse_event.x < 8)
-                if (mouse_event.y > 3 && mouse_event.y < 7)
-                {
-                    scrn->selectVMwindow(mouse_event.x);
+                // // if (mouse_event.y == 0 && mouse_event.x > 0 && mouse_event.x < 8)
+                // if (mouse_event.y > 3 && mouse_event.y < 7)
+                // {
+                //     scrn->selectVMwindow(mouse_event.x);
+                //
+                //     // attron(COLOR_PAIR(5));
+                //     // mvprintw(1, 0, "  ");
+                //     // mvprintw(1, 0, "%d", mouse_event.x);
+                //     // attroff(COLOR_PAIR(5));
+                //     // refresh();
+                // }
 
-                    // attron(COLOR_PAIR(5));
-                    // mvprintw(1, 0, "  ");
-                    // mvprintw(1, 0, "%d", mouse_event.x);
-                    // attroff(COLOR_PAIR(5));
-                    // refresh();
-                }
+                // IAMHERETOO see std::jthread
+                Button1Released btn_released(mouse_event); //TODO fire this off in a one-shot thread (detached()).
             }
 
         }

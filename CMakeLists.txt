@@ -19,6 +19,7 @@ set(SRC_LIST
     logging/sdj.cpp
     logging/writer.cpp
     ui/layout.cpp
+    ui/button1-released.cpp
     ui/event-handler.cpp
     ui/windows/primary/stdscr.cpp
     ui/windows/collection.cpp

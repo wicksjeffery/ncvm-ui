@@ -85,10 +85,11 @@ namespace VM
 
         // VMState _vmstate;
 
-        UI::Windows::Primary::Stdscr* scrn;
+        // UI::Windows::Primary::Stdscr* scrn;
 
     public:
-        Manager(UI::Windows::Primary::Stdscr* scr);
+        // Manager(UI::Windows::Primary::Stdscr* scr);
+        Manager();
         ~Manager();
 
         void monitorStates(int);

@@ -3,11 +3,24 @@
 
 // #include "rectangle.hpp"
 #include <string>
+#include <array>
 #include <ncurses.h>
 namespace UI::Windows::Primary
 {
     class Stdscr
     {
+        Stdscr();
+        ~Stdscr() = default;
+
+        Stdscr(const Stdscr&) = delete;
+        Stdscr& operator=(const Stdscr&) = delete;
+
+        // std::string vm_name_0;
+        // std::string vm_name_1;
+        // std::string vm_name_2;
+        // std::string vm_name_3;
+        std::array<std::string, 4> vm_names;
+
         short vm1_start_x = 0;
         short vm2_start_x = 0;
         short vm3_start_x = 0;
@@ -22,7 +35,7 @@ namespace UI::Windows::Primary
         // const char* initialStateToString(int s);
         // const char* lifecyecleStateToString(int s);
     public:
-        Stdscr();
+        static Stdscr& getInstance();
 
         void selectVMwindow(int x_position)
         {
@@ -58,6 +71,13 @@ namespace UI::Windows::Primary
                        unsigned short reason,
                        unsigned short vm_number,
                        bool);
+
+        void saveVMName(unsigned short vm_number, std::string name)
+        {
+            vm_names[vm_number] = name;
+        }
+
+        void setVMBoxColor(unsigned short);
     };
 }
 
