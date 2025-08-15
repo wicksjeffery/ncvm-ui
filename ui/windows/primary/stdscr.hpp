@@ -20,6 +20,7 @@ namespace UI::Windows::Primary
         // std::string vm_name_2;
         // std::string vm_name_3;
         std::array<std::string, 4> vm_names;
+        std::array<unsigned, 4> vm_start_columns;
 
         short vm1_start_x = 0;
         short vm2_start_x = 0;
@@ -28,6 +29,7 @@ namespace UI::Windows::Primary
 
         const unsigned vm_box_width = 17;
         void drawOutterBox(short, short);
+        void allocateVMwindowsOLD();
         void allocateVMwindows();
         void drawVMwindow(short);
         void writeVMinformation(short, const char*);
@@ -77,7 +79,7 @@ namespace UI::Windows::Primary
             vm_names[vm_number] = name;
         }
 
-        void setVMBoxColor(unsigned short);
+        // void setVMBoxColor(unsigned short);
     };
 }
 

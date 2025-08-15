@@ -29,23 +29,23 @@ void UI::Windows::Primary::Stdscr::writeVMinformation(short vm_x_start, const ch
     // attroff(COLOR_PAIR(3));
 }
 
-//TODO call this from void VM::Manager::setInitialVMwindowsState() and
-//    ->  void VM::Manager::updateVMwindowState(VMState v = VMState())
-// or wherever it was that is doing it.
-void UI::Windows::Primary::Stdscr::setVMBoxColor(unsigned short vm_number)
-{
-    const int max_x = 17; //Current allocated width. Maybe put this in a header somwhere
-
-    //TODO maybe move color_to_use setting up here?
-    attron(COLOR_PAIR(3));
-    mvhline(4, getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
-    mvhline(5, getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
-    mvhline(6, getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
-
-    //TODO maybe make vm1_start_x in a std::array too, so I can address it with brackets.
-    mvprintw(5, vm1_start_x, "%s", vm_names[vm_number].c_str());
-    attroff(COLOR_PAIR(3));
-}
+// //TODO call this from void VM::Manager::setInitialVMwindowsState() and
+// //    ->  void VM::Manager::updateVMwindowState(VMState v = VMState())
+// // or wherever it was that is doing it.
+// void UI::Windows::Primary::Stdscr::setVMBoxColor(unsigned short vm_number)
+// {
+//     const int max_x = 17; //Current allocated width. Maybe put this in a header somwhere
+//
+//     //TODO maybe move color_to_use setting up here?
+//     attron(COLOR_PAIR(13));
+//     mvhline(4, getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+//     mvhline(5, getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+//     mvhline(6, getVMwindowStartX(vm_number)+1, ' ', max_x-2); //Clear the line.
+//
+//     //TODO maybe make vm1_start_x in a std::array too, so I can address it with brackets.
+//     mvprintw(5, vm1_start_x, "%s", vm_names[vm_number].c_str());
+//     attroff(COLOR_PAIR(13));
+// }
 
 
 void UI::Windows::Primary::Stdscr::drawVMwindow(short vm_x_start)
@@ -69,7 +69,7 @@ void UI::Windows::Primary::Stdscr::drawVMwindow(short vm_x_start)
 }
 
 
-void UI::Windows::Primary::Stdscr::allocateVMwindows()
+void UI::Windows::Primary::Stdscr::allocateVMwindowsOLD()
 {
      // Rectangle(7, 17, 3, begin_x)
 
@@ -93,7 +93,6 @@ void UI::Windows::Primary::Stdscr::allocateVMwindows()
     {
         throw(std::runtime_error("Error: The mimimum is 80 columns wide and 30 lines high. (640x480)"));
     }
-
 
 
     // Distrubute leftover spaces
@@ -127,56 +126,136 @@ void UI::Windows::Primary::Stdscr::allocateVMwindows()
     vm3_start_x += (vm_box_width + vm2_start_x + available_spaces_leftover);
     vm4_start_x += (vm_box_width + vm3_start_x + available_spaces_leftover);
     // END: setup for vm windows
-    // first_vm_start_x += 4 + available_spaces_leftover;
-    // second_vm_start_x += (vm_box_width + first_vm_start_x + available_spaces_leftover);
-    // third_vm_start_x += (vm_box_width + second_vm_start_x + available_spaces_leftover);
-    // fourth_vm_start_x += (vm_box_width + third_vm_start_x + available_spaces_leftover);
+
+    attron(COLOR_PAIR(3));
+    mvaddch(3, vm1_start_x, ACS_ULCORNER);
+    mvvline(4, vm1_start_x, ACS_VLINE, 5);
+    mvaddch(4 + 3, vm1_start_x, ACS_LTEE);
+    mvaddch(4 + 3 + 2, (vm_box_width + vm1_start_x) - 1, ACS_LRCORNER);
+
+    mvhline(3, vm1_start_x + 1, ACS_HLINE, vm_box_width - 2);
+    mvhline(4 + 3 + 2, vm1_start_x + 1, ACS_HLINE, vm_box_width - 2);
+
+    mvaddch(3, (vm_box_width + vm1_start_x) - 1, ACS_URCORNER);
+    mvvline(4, (vm_box_width + vm1_start_x) - 1, ACS_VLINE, 5);
+    mvaddch(4 + 3, (vm_box_width + vm1_start_x) - 1, ACS_RTEE);
+    mvaddch(4 + 3 + 2, vm1_start_x, ACS_LLCORNER);
+
+    mvhline(4 + 3, vm1_start_x + 1, ACS_HLINE, vm_box_width - 2);
+
+
+    mvaddch(3, vm2_start_x, ACS_ULCORNER);
+    mvvline(4, vm2_start_x, ACS_VLINE, 5);
+    mvaddch(4 + 3, vm2_start_x, ACS_LTEE);
+    mvaddch(4 + 3 + 2, (vm_box_width + vm2_start_x) - 1, ACS_LRCORNER);
+
+    mvhline(3, vm2_start_x + 1, ACS_HLINE, vm_box_width - 2);
+    mvhline(4 + 3 + 2, vm2_start_x + 1, ACS_HLINE, vm_box_width - 2);
+
+    mvaddch(3, (vm_box_width + vm2_start_x) - 1, ACS_URCORNER);
+    mvvline(4, (vm_box_width + vm2_start_x) - 1, ACS_VLINE, 5);
+    mvaddch(4 + 3, (vm_box_width + vm2_start_x) - 1, ACS_RTEE);
+    mvaddch(4 + 3 + 2, vm2_start_x, ACS_LLCORNER);
+
+    mvhline(4 + 3, vm2_start_x + 1, ACS_HLINE, vm_box_width - 2);
+    attroff(COLOR_PAIR(3));
+}
+
+void UI::Windows::Primary::Stdscr::allocateVMwindows()
+{
+    // Rectangle(7, 17, 3, begin_x)
+
+    const unsigned vm_box_width = 17;//constant
+    // BEGIN: setup for vm windows
+    // std::ofstream outputFile("/tmp/debug.txt");
+    // outputFile << "Space needed: " << 17 * 4 << std::endl;
+    short available_space = (COLS-5) - 4;
+    // short available_space = (100-5) - 4;
+    // outputFile << "Available space is: " << available_space << std::endl;
+    short min_space_needed = vm_box_width * 4;
+    // outputFile << "Min space needed: " << min_space_needed << std::endl;
+    short spaces_left_over = available_space - min_space_needed;
+    // outputFile << "Space left over: " << spaces_left_over << std::endl;
+    short available_spaces_leftover = spaces_left_over / 5;
+    // outputFile << "Spaces distributed: " << available_spaces_leftover << std::endl;
+    short leftovers_from_distributed = min_space_needed % 5; // There are 5 total spaces.
+    // outputFile << "Leftover from spaces distributed: " << leftovers_from_distributed << std::endl;
+
+    if (available_space < min_space_needed)
+    {
+        throw(std::runtime_error("Error: The mimimum is 80 columns wide and 30 lines high. (640x480)"));
+    }
+
+    // Distrubute leftover spaces
+    switch (leftovers_from_distributed)
+    {
+        case 1:
+            // Put it in the middle.
+            vm_start_columns[2] = 1;
+            break;
+        case 2:
+            // Put them on the ends.
+            vm_start_columns[0] = 1;
+            // fourth is granted.
+            break;
+        case 3:
+            // Put them in the middle and ends
+            vm_start_columns[0] = 1;
+            vm_start_columns[2] = 1;
+            break;
+        case 4:
+            // Put on all except middle.
+            vm_start_columns[0] = 1;
+            vm_start_columns[1] = 1;
+            vm_start_columns[3] = 1;
+            break;
+    }
+
+    // const unsigned vm_box_width = 17;//constant
+    vm_start_columns[0] += 4 + available_spaces_leftover;
+    vm_start_columns[1] += (vm_box_width + vm_start_columns[0] + available_spaces_leftover);
+    vm_start_columns[2] += (vm_box_width + vm_start_columns[1] + available_spaces_leftover);
+    vm_start_columns[3] += (vm_box_width + vm_start_columns[2] + available_spaces_leftover);
+
     // END: setup for vm windows
 
-    // attron(COLOR_PAIR(8));
-    //
-    // mvprintw(1, 0, "%s%d", "helloer: ", vm1_start_x);
-    // refresh();
-    // attroff(COLOR_PAIR(8));
 
-    // // BEGIN: Weewee box
-    // attron(COLOR_PAIR(3));
-    // // move(3, vm1_start_x);
-    // mvaddch(3, vm1_start_x, ACS_ULCORNER); // Top-Left corner
-    // // addch(ACS_ULCORNER); // Top-Left corner
-    // mvhline(3, vm1_start_x + 1, ACS_HLINE, vm_box_width - 2); // Top horizontal
-    // // hline(ACS_HLINE, vm_box_width-2); // Top horizontal
-    // mvaddch(3, (vm_box_width + vm1_start_x) - 1, ACS_URCORNER); // Top-right corner
-    // // addch(ACS_URCORNER); // Top-right corner
-    // mvvline(4, (vm_box_width + vm1_start_x) - 1, ACS_VLINE, 5); // Right vertical
-    //
-    // mvhline(4 + 3, vm1_start_x + 1, ACS_HLINE, vm_box_width - 2);
-    //
-    // mvvline(4, vm1_start_x, ACS_VLINE, 5);
-    //
-    // mvaddch(4 + 3, (vm_box_width + vm1_start_x) - 1, ACS_RTEE);
-    // mvaddch(4 + 3, vm1_start_x, ACS_LTEE); // Lower-Left corner ACS_LLCORNER
-    //
-    // mvaddch(4 + 3 + 2, vm1_start_x, ACS_LLCORNER);
-    // mvhline(4 + 3 + 2, vm1_start_x + 1, ACS_HLINE, vm_box_width - 2);
-    // mvaddch(4 + 3 + 2, (vm_box_width + vm1_start_x) - 1, ACS_LRCORNER);
-    // attroff(COLOR_PAIR(3));
-    // // END: Weewee box
-    //
-    // attron(COLOR_PAIR(4));
-    // mvhline(4, vm1_start_x+1, ' ', vm_box_width-2);
-    // mvhline(5, vm1_start_x+1, ' ', vm_box_width-2);
-    // mvhline(6, vm1_start_x+1, ' ', vm_box_width-2);
-    // attroff(COLOR_PAIR(4));
-    //
-    //
-    //
-    // attron(COLOR_PAIR(3));
-    // mvprintw(5, vm1_start_x+2, "%s", "ABCDEFGHIJKLM");
-    // mvhline(4 + 3 + 1, vm1_start_x+1, ' ', vm_box_width-2);
-    // attroff(COLOR_PAIR(3));
+
+    for (const unsigned& start_column : vm_start_columns)
+    {
+        //BEGIN draw vm boxes
+        attron(COLOR_PAIR(3));
+        mvaddch(3, start_column, ACS_ULCORNER);
+        mvvline(4, start_column, ACS_VLINE, 5);
+        mvaddch(4 + 3, start_column, ACS_LTEE);
+        mvaddch(4 + 3 + 2, (vm_box_width + start_column) - 1, ACS_LRCORNER);
+
+        mvhline(3, start_column + 1, ACS_HLINE, vm_box_width - 2);
+        mvhline(4 + 3 + 2, start_column + 1, ACS_HLINE, vm_box_width - 2);
+
+        mvaddch(3, (vm_box_width + start_column) - 1, ACS_URCORNER);
+        mvvline(4, (vm_box_width + start_column) - 1, ACS_VLINE, 5);
+        mvaddch(4 + 3, (vm_box_width + start_column) - 1, ACS_RTEE);
+        mvaddch(4 + 3 + 2, start_column, ACS_LLCORNER);
+
+        mvhline(4 + 3, start_column + 1, ACS_HLINE, vm_box_width - 2);
+        attroff(COLOR_PAIR(3));
+        //END draw vm boxes
+
+        //BEGIN color vm boxes black
+        attron(COLOR_PAIR(4));
+        mvhline(4, start_column+1, ' ', vm_box_width-2);
+        mvhline(5, start_column+1, ' ', vm_box_width-2);
+        mvhline(6, start_column+1, ' ', vm_box_width-2);
+        attroff(COLOR_PAIR(4));
+        //END color vm boxes black
+    }
 
 }
+
+
+
+
 
 void UI::Windows::Primary::Stdscr::drawOutterBox(short start_y, short end_y)
 {
@@ -238,15 +317,15 @@ UI::Windows::Primary::Stdscr::Stdscr()
     drawOutterBox(13, (LINES-4));
 
     allocateVMwindows();
-    drawVMwindow(vm1_start_x);
-    drawVMwindow(vm2_start_x);
-    drawVMwindow(vm3_start_x);
-    drawVMwindow(vm4_start_x);
+    // drawVMwindow(vm1_start_x);
+    // drawVMwindow(vm2_start_x);
+    // drawVMwindow(vm3_start_x);
+    // drawVMwindow(vm4_start_x);
 
-    writeVMinformation(vm1_start_x, "             ");
-    writeVMinformation(vm2_start_x, "             ");
-    writeVMinformation(vm3_start_x, "             ");
-    writeVMinformation(vm4_start_x, "             ");
+    // writeVMinformation(vm1_start_x, "             ");
+    // writeVMinformation(vm2_start_x, "             ");
+    // writeVMinformation(vm3_start_x, "             ");
+    // writeVMinformation(vm4_start_x, "             ");
 
     attron(COLOR_PAIR(12));
     mvhline(LINES-1, 0, ' ', COLS);

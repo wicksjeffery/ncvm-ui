@@ -155,7 +155,6 @@ UI::Layout::Layout()
     //
 
 
-    // scrn = new Windows::Primary::Stdscr;
     UI::Windows::Primary::Stdscr::getInstance();
 
     update_panels();

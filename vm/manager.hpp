@@ -70,7 +70,7 @@ namespace VM
         //BEGIN TODO combign these two functions
         void updateVMwindowState(VMState v);
         void setInitialVMwindowsState();
-        const char* lifycycleEvent(VMState);
+        // const char* lifycycleEvent(VMState);
         //END TODO combign these two functions
 
         const char* initialStateToString(int);

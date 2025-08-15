@@ -42,17 +42,18 @@ UI::Button1Released::Button1Released(MEVENT mouse_event)
 
         if (mouse_event.x > stdscreen.getVMwindowStartX(0) && mouse_event.x < ( stdscreen.getVMwindowStartX(0)+(17-1) )) //TODO use a const from a header instead of "17"
         {
-            attron(COLOR_PAIR(8));
+            // attron(COLOR_PAIR(8));
+            //
+            // // mvprintw(1, 0, "%s", "helloer:");
+            // printw("%s", "helloer:");
+            // // mvprintw(1, 1, "%s%d", "helloer: ", stdscreen.getVMwindowStartX(0));
+            // // refresh();
+            // update_panels();
+            // doupdate();
 
-            // mvprintw(1, 0, "%s", "helloer:");
-            printw("%s", "helloer:");
-            // mvprintw(1, 1, "%s%d", "helloer: ", stdscreen.getVMwindowStartX(0));
-            // refresh();
-            update_panels();
-            doupdate();
-
-            stdscreen.setVMBoxColor(0);
-            attroff(COLOR_PAIR(8));
+            // stdscreen.setVMBoxColor(0);
+            // stdscreen.writeToUI(0);
+            // attroff(COLOR_PAIR(8));
 
 
         }

@@ -27,10 +27,9 @@ int main(int argc, char* argv[])
 
 
         Logging::Manager& log_mgr = Logging::Manager::getInstance();
-
-
-
-        // //TODO: remove this thread and put display_tail in UI::EventHandler::listen()
+        //
+        //
+        // // //TODO: remove this thread and put display_tail in UI::EventHandler::listen()
         std::thread logger_thread(&Logging::Manager::display_tail, &log_mgr, 9);
 
         VM::Manager vmm;
@@ -44,11 +43,11 @@ int main(int argc, char* argv[])
         if (f1.get() == 0)
         {
             //This will be when exit was called from EventHandler.
-            vmm.quit();
-            vmm_thread.join();
+            // vmm.quit();
+            // vmm_thread.join();
 
-            log_mgr.quit();
-            logger_thread.join();
+            // log_mgr.quit();
+            // logger_thread.join();
 
             return 0;
         } else return 1;

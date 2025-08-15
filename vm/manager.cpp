@@ -302,180 +302,21 @@ const char* VM::Manager::lifecyecleStateToString(int s)
 }
 
 
-// TODO MERGE THIS FUNCTION INTO updateVMwindows()
-const char * VM::Manager::lifycycleEvent(VMState v)
-{
-    unsigned vm_number = 0;
-    std::string event_state;
-    for (auto& vm : vms)
-    {
-        vm_number++;
-        // Do something if the event was generated from one of the machines,
-        // we're watching.
-        if (v.name == vm.name)
-        {
-            vm.state = v.state; //TODO do I only care to save the machine name?
-            vm.reason = v.reason; //Maybe not neccessary to save state and reason past this function.
-
-            // event_state = lifecyecleEventToString(v.state);
-
-            // switch (v.state)
-            // {
-            //     case VIR_DOMAIN_EVENT_DEFINED:
-            //         event_state = " defined: ";
-            //         break;
-            //     case VIR_DOMAIN_EVENT_UNDEFINED:
-            //         event_state = " undefined: ";
-            //         break;
-            //     case VIR_DOMAIN_EVENT_STARTED:
-            //         event_state = " started: ";
-            //         break;
-            //     case VIR_DOMAIN_EVENT_SUSPENDED:
-            //         event_state = " suspended: ";
-            //         break;
-            //     case VIR_DOMAIN_EVENT_RESUMED:
-            //         event_state = " resumed: ";
-            //         break;
-            //     case VIR_DOMAIN_EVENT_STOPPED:
-            //         event_state = " stopped: ";
-            //         break;
-            //     case VIR_DOMAIN_EVENT_SHUTDOWN:
-            //         event_state = " shutdown: ";
-            //         break;
-            //     case VIR_DOMAIN_EVENT_PMSUSPENDED:
-            //         event_state = " pm_suspended: ";
-            //         break;
-            //     case VIR_DOMAIN_EVENT_CRASHED:
-            //         event_state = " crashed: ";
-            //         break;
-            //     default:
-            //         event_state = " error: ";
-            //         break;
-            // }
-
-            event_state.append(std::to_string(v.reason));
-
-            switch (vm_number)
-            {
-                case 1:
-                {
-
-                    UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-                    WINDOW* win = collection.find("UI::Windows::VMControl::One")->get_window();
-                    int max_x = getmaxx(collection.find("UI::Windows::VMControl::One")->get_window()); // Get the maximum column of the window.
-                    if (event_state.length() > max_x-4) //TODO think if this is right thing to do here.
-                    {
-                        event_state.resize(max_x-4);
-                        event_state.append("~");
-                    }
-
-                    wattron(win, COLOR_PAIR(3) | A_BOLD);
-                    mvwhline(win, 5, 1, ' ', max_x-2); //Clear the line.
-                    wmove(win, 5, 1);
-                    waddch(win, ACS_RARROW);
-                    wprintw(win, "%s", event_state.c_str());
-                    wattroff(win, COLOR_PAIR(3) | A_BOLD);
-                    wrefresh(win);
-                }
-                case 2:
-                {
-
-                    UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-                    WINDOW* win = collection.find("UI::Windows::VMControl::Two")->get_window();
-                    int max_x = getmaxx(collection.find("UI::Windows::VMControl::Two")->get_window()); // Get the maximum column of the window.
-                    if (event_state.length() > max_x-4) //TODO think if this is right thing to do here.
-                    {
-                        event_state.resize(max_x-4);
-                        event_state.append("~");
-                    }
-
-                    wattron(win, COLOR_PAIR(3) | A_BOLD);
-                    mvwhline(win, 5, 1, ' ', max_x-2); //Clear the line.
-                    wmove(win, 5, 1);
-                    waddch(win, ACS_RARROW);
-                    wprintw(win, "%s", event_state.c_str());
-                    wattroff(win, COLOR_PAIR(3) | A_BOLD);
-                    wrefresh(win);
-                }
-                case 3:
-                {
-
-                    UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-                    WINDOW* win = collection.find("UI::Windows::VMControl::Three")->get_window();
-                    int max_x = getmaxx(collection.find("UI::Windows::VMControl::Three")->get_window()); // Get the maximum column of the window.
-                    if (event_state.length() > max_x-4) //TODO think if this is right thing to do here.
-                    {
-                        event_state.resize(max_x-4);
-                        event_state.append("~");
-                    }
-
-                    wattron(win, COLOR_PAIR(3) | A_BOLD);
-                    mvwhline(win, 5, 1, ' ', max_x-2); //Clear the line.
-                    wmove(win, 5, 1);
-                    waddch(win, ACS_RARROW);
-                    wprintw(win, "%s", event_state.c_str());
-                    wattroff(win, COLOR_PAIR(3) | A_BOLD);
-                    wrefresh(win);
-                }
-                case 4:
-                {
-
-                    UI::Windows::Collection& collection = UI::Windows::Collection::getInstance();
-                    WINDOW* win = collection.find("UI::Windows::VMControl::Four")->get_window();
-                    int max_x = getmaxx(collection.find("UI::Windows::VMControl::Four")->get_window()); // Get the maximum column of the window.
-                    if (event_state.length() > max_x-4) //TODO think if this is right thing to do here.
-                    {
-                        event_state.resize(max_x-4);
-                        event_state.append("~");
-                    }
-
-                    wattron(win, COLOR_PAIR(3) | A_BOLD);
-                    mvwhline(win, 5, 1, ' ', max_x-2); //Clear the line.
-                    wmove(win, 5, 1);
-                    waddch(win, ACS_RARROW);
-                    wprintw(win, "%s", event_state.c_str());
-                    wattroff(win, COLOR_PAIR(3) | A_BOLD);
-                    wrefresh(win);
-                }
-            }
-        }
-    }
-
-    return "";
-
-}
-
-
-
-
-
-
 void VM::Manager::setInitialVMwindowsState()
 {
     for (int vm_number = 0; vm_number < vms.size(); vm_number++) //TODO use tmp_vmstate to store...
     {
-        // std::string name;
-        // std::stringstream ss;
-
-        // name = vms[vm_number].name;
-        // vms[i].state = v.state;
-        // vms[i].reason = v.reason;
-
-        // ss << initialStateToString(vms[i].state) << vms[i].reason;
-
-        // writeToUI(vms[i].name, ss.str(), i);
-
-
         UI::Windows::Primary::Stdscr& stdscreen = UI::Windows::Primary::Stdscr::getInstance();
 
         stdscreen.saveVMName(vm_number, vms[vm_number].name);
 
-        stdscreen.writeToUI(vms[vm_number].name,
-                        // vms[vm_number].state,
-                        initialStateToString(vms[vm_number].state),
-                        vms[vm_number].reason,
-                        vm_number,
-                        true);
+        //TODO commented for testing:...
+        // stdscreen.writeToUI(vms[vm_number].name,
+        //                 // vms[vm_number].state,
+        //                 initialStateToString(vms[vm_number].state),
+        //                 vms[vm_number].reason,
+        //                 vm_number,
+        //                 true);
     }
 }
 
